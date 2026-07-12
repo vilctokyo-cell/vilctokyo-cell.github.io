@@ -122,6 +122,8 @@ img { max-width: 100%; }
   border: 1.5px solid rgba(255, 255, 255, 0.6);
   color: #fff;
 }
+.btn--line { background: #06c755; color: #fff; }
+.btn--line:hover { background: #05b34c; }
 
 /* Sections */
 .section { padding: 72px 20px; }
