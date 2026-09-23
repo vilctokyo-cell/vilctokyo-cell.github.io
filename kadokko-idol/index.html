@@ -1,0 +1,1310 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>かどっこアイドル | VILC</title>
+<meta name="description" content="隅っこ好きな内気な生き物がアイドルに育っていく、見てるだけでも楽しい放置育成ゲーム。VILC発の実験企画です。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VILC">
+<meta property="og:title" content="かどっこアイドル">
+<meta property="og:description" content="隅っこ好きな内気な生き物がアイドルに育っていく、見てるだけでも楽しい放置育成ゲーム">
+<meta property="og:url" content="https://www.vilc.tokyo/kadokko-idol/">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --cream:#FFF6EC; --paper:#FFFFFF; --card-bg:#FFFFFF;
+    --ink:#5B4335; --ink-soft:#8A7365; --line:#F0E2D6;
+    --blush:#FFC9D6; --blush-deep:#FF8FAC;
+    --mint:#BFEAD9; --mint-deep:#5FBFA0;
+    --lavender:#DED0F7; --lavender-deep:#A784E8;
+    --gold:#F3C15F; --gold-deep:#DA9E2C;
+    --body-color:#FFE3C7; --shell-color:#E4D7C4; --hair-color:#6B4A3A;
+    --shadow:0 10px 26px rgba(139,99,68,0.14);
+    --ribbon-color:#FF8FAC;
+    --dot-color:rgba(139,99,68,0.07);
+    --stagebg-0:linear-gradient(180deg,#EFE6DA,#DCCBB0);
+    --stagebg-1:linear-gradient(180deg,#FDEFE1,#F7DCC6);
+    --stagebg-2:linear-gradient(180deg,#FFE9EF,#FFD3E0);
+    --stagebg-3:linear-gradient(180deg,#F3E6FF,#E1CBFA);
+    --stagebg-4:linear-gradient(180deg,#E7CFFF,#C89BF5);
+    --stagebg-5:linear-gradient(180deg,#8C5FA8,#4E3568);
+    --stagebg-6:linear-gradient(180deg,#4A2E63,#1E1330);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --cream:#241925; --paper:#2E2030; --card-bg:#332536;
+      --ink:#F6E9DF; --ink-soft:#CBB8C4; --line:rgba(255,255,255,0.09);
+      --blush:#5A3348; --blush-deep:#FF9FB7;
+      --mint:#22423B; --mint-deep:#7FD1B9;
+      --lavender:#392E52; --lavender-deep:#B79EEA;
+      --gold:#5B471F; --gold-deep:#F3C15F;
+      --body-color:#4A3B36; --shell-color:#3A322F;
+      --shadow:0 10px 26px rgba(0,0,0,0.4);
+      --dot-color:rgba(255,255,255,0.05);
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 8%, rgba(255,255,255,.55), transparent 42%),
+      radial-gradient(circle at 85% 94%, rgba(255,255,255,.35), transparent 42%),
+      var(--cream);
+    color:var(--ink);
+    font-family:'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif;
+    padding:20px 16px 40px;
+    position:relative; overflow-x:hidden;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-2; pointer-events:none;
+    background-image: radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+  }
+  img{max-width:100%;}
+  .bg-blob{position:fixed; border-radius:50%; filter:blur(40px); opacity:.35; z-index:-1; pointer-events:none;}
+  .bg-blob.b1{width:260px;height:260px; background:var(--blush); top:-80px; left:-60px; animation:drift1 22s ease-in-out infinite;}
+  .bg-blob.b2{width:220px;height:220px; background:var(--mint); bottom:-70px; right:-50px; animation:drift2 26s ease-in-out infinite;}
+  .bg-blob.b3{width:180px;height:180px; background:var(--lavender); top:40%; right:-70px; animation:drift1 30s ease-in-out infinite reverse;}
+  @keyframes drift1{0%,100%{transform:translate(0,0);}50%{transform:translate(20px,30px);}}
+  @keyframes drift2{0%,100%{transform:translate(0,0);}50%{transform:translate(-25px,-20px);}}
+  .bg-star{position:fixed; font-size:1.1rem; color:var(--gold); opacity:.4; z-index:-1; pointer-events:none; animation:twinkle 3s ease-in-out infinite;}
+  .bg-star.s1{top:8%; left:8%;}
+  .bg-star.s2{top:20%; right:10%; animation-delay:.8s;}
+  .bg-star.s3{bottom:16%; left:7%; animation-delay:1.6s;}
+  .bg-star.s4{bottom:32%; right:9%; animation-delay:2.3s;}
+
+  .app{max-width:480px; margin:0 auto; display:flex; flex-direction:column; gap:14px;}
+
+  .sticky-top{
+    background:var(--card-bg); border-radius:22px;
+    padding:10px; margin:0;
+    box-shadow:var(--shadow);
+    display:flex; flex-direction:column; gap:10px;
+  }
+
+  header{display:flex; align-items:center; justify-content:space-between; gap:8px; padding-inline:2px;}
+  header .title-wrap{display:flex; flex-direction:column;}
+  header .icon-group{display:flex; gap:6px;}
+  h1{font-family:'Mochiy Pop One', 'Zen Maru Gothic', sans-serif; font-size:1.5rem; margin:0; color:var(--blush-deep); text-wrap:balance;}
+  header .tagline{font-size:.72rem; color:var(--ink-soft); margin-top:2px;}
+  .brand-tag{
+    align-self:flex-start; margin-top:5px; font-size:.6rem; font-weight:700; letter-spacing:.03em;
+    color:var(--ink-soft); text-decoration:none; border:1px solid var(--line); border-radius:999px;
+    padding:2px 9px; background:var(--cream);
+  }
+  .brand-tag:hover{color:var(--blush-deep); border-color:var(--blush-deep);}
+  .icon-btn{
+    width:38px;height:38px; border-radius:50%; border:1px solid var(--line);
+    background:var(--card-bg); color:var(--ink); font-size:1rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); flex-shrink:0;
+    text-decoration:none;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .ticker{
+    background:var(--card-bg); border:1px solid var(--line); border-radius:16px;
+    padding:8px 12px; display:flex; align-items:center; gap:8px; box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .ticker .tag{
+    font-size:.66rem; font-weight:700; color:var(--paper); background:var(--blush-deep);
+    padding:3px 8px; border-radius:999px; flex-shrink:0; letter-spacing:.03em;
+  }
+  .ticker #tickerText{font-size:.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:opacity .3s;}
+
+  .stats-row{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+  .stat-chip{
+    background:var(--card-bg); border:1px solid var(--line); border-radius:14px; padding:8px 6px;
+    text-align:center; box-shadow:var(--shadow);
+  }
+  .stat-chip .label{font-size:.62rem; color:var(--ink-soft);}
+  .stat-chip .value{font-family:'Mochiy Pop One',sans-serif; font-size:1rem; font-variant-numeric:tabular-nums; word-break:break-all;}
+
+  .stage-card{
+    border-radius:26px; padding:18px 12px 14px; box-shadow:var(--shadow);
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    position:relative; overflow:hidden; transition:background 1.2s ease;
+  }
+  .stage-card.s0{background:var(--stagebg-0);} .stage-card.s1{background:var(--stagebg-1);}
+  .stage-card.s2{background:var(--stagebg-2);} .stage-card.s3{background:var(--stagebg-3);}
+  .stage-card.s4{background:var(--stagebg-4);} .stage-card.s5{background:var(--stagebg-5);}
+  .stage-card.s6{background:var(--stagebg-6);}
+  .stage-name-pill{
+    background:rgba(255,255,255,.85); color:#5B4335; font-size:.72rem; font-weight:700;
+    padding:4px 12px; border-radius:999px; box-shadow:0 2px 8px rgba(0,0,0,.12); text-align:center;
+  }
+  .stage-name-pill b{color:var(--blush-deep);}
+  #stageArea{width:180px; height:180px; cursor:pointer; touch-action:manipulation; user-select:none; position:relative;}
+  #stageArea:active .char-body{transform:scale(.96);}
+  .room-bg{position:absolute; inset:0; width:100%; height:100%; border-radius:16px; z-index:0;}
+  .char-svg{width:100%; height:100%; overflow:visible; position:relative; z-index:1;}
+  .speech-bubble{
+    position:absolute; top:8px; left:50%; z-index:2; transform:translate(-50%,0) scale(.5);
+    background:#fff; color:#5B4335; font-size:.68rem; font-weight:700; padding:5px 11px;
+    border-radius:14px; box-shadow:0 4px 10px rgba(0,0,0,.18); white-space:nowrap;
+    opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
+  }
+  .speech-bubble::after{
+    content:""; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%);
+    border-width:5px 5px 0; border-style:solid; border-color:#fff transparent transparent;
+  }
+  .speech-bubble.show{opacity:1; transform:translate(-50%,0) scale(1);}
+  #grpBlobBody{transform-origin:100px 120px; animation:bob 3.4s ease-in-out infinite;}
+  #grpRealForm{transform-origin:100px 110px; animation:bob 3.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+  .eyes-closed, .eyes-open{transform-origin:center;}
+  .blink{animation:blink 4.2s ease-in-out infinite;}
+  @keyframes blink{0%,94%,100%{transform:scaleY(1);}97%{transform:scaleY(.12);}}
+  .sparkle-grp path{animation:twinkle 1.8s ease-in-out infinite;}
+  .sparkle-grp path:nth-child(2){animation-delay:.6s;} .sparkle-grp path:nth-child(3){animation-delay:1.1s;}
+  @keyframes twinkle{0%,100%{opacity:.2; transform:scale(.7);}50%{opacity:1; transform:scale(1.15);}}
+  .ray-grp{animation:rayspin 40s linear infinite; transform-origin:100px 100px;}
+  @keyframes rayspin{to{transform:rotate(360deg);}}
+  .aura{animation:pulse 2.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:.5;}50%{opacity:.9;}}
+  .arm-wiggle{animation:wiggle .4s ease-in-out;}
+  @keyframes wiggle{0%,100%{transform:rotate(0);}50%{transform:rotate(-14deg);}}
+
+  .progress-wrap{width:100%; padding:0 6px;}
+  .progress-label{display:flex; justify-content:space-between; font-size:.66rem; color:rgba(255,255,255,.9); margin-bottom:4px; text-shadow:0 1px 3px rgba(0,0,0,.3); gap:6px;}
+  .progress-label span:first-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .progress-bar{height:10px; border-radius:999px; background:rgba(255,255,255,.35); overflow:hidden;}
+  .progress-fill{height:100%; background:linear-gradient(90deg,var(--gold-deep),var(--gold)); border-radius:999px; transition:width .5s ease;}
+
+  .cheer-btn{
+    font-family:'Mochiy Pop One',sans-serif; font-size:1rem; color:#fff; background:linear-gradient(180deg,var(--blush-deep),#E8698B);
+    border:none; border-radius:999px; padding:12px 30px; cursor:pointer; box-shadow:0 6px 0 #C85272,var(--shadow);
+    transition:transform .08s, box-shadow .08s;
+  }
+  .cheer-btn:active{transform:translateY(4px); box-shadow:0 2px 0 #C85272,var(--shadow);}
+
+  .particle{position:absolute; pointer-events:none; font-size:1.1rem; animation:floatUp 1s ease-out forwards; z-index:5;}
+  @keyframes floatUp{0%{opacity:1; transform:translate(0,0) scale(.8);}100%{opacity:0; transform:translate(var(--dx,0px),-70px) scale(1.2);}}
+  .confetti{position:fixed; width:8px; height:8px; border-radius:2px; pointer-events:none; z-index:50; animation:fall 1.6s ease-in forwards;}
+  @keyframes fall{0%{opacity:1; transform:translateY(0) rotate(0);}100%{opacity:0; transform:translateY(240px) rotate(400deg);}}
+
+  .swatch-row{display:flex; align-items:center; gap:8px; justify-content:center;}
+  .swatch-row .lbl{font-size:.68rem; color:var(--ink-soft);}
+  .swatch{width:22px; height:22px; border-radius:50%; border:2px solid var(--paper); box-shadow:0 0 0 1px var(--line); cursor:pointer;}
+  .swatch.active{box-shadow:0 0 0 2px var(--ink);}
+
+  .share-row{display:flex; justify-content:center;}
+  .share-btn{
+    display:inline-flex; align-items:center; gap:6px; font-size:.74rem; font-weight:700; color:var(--ink);
+    background:var(--paper); border:1px solid var(--line); border-radius:999px; padding:8px 16px;
+    text-decoration:none; box-shadow:var(--shadow); cursor:pointer;
+  }
+  .share-btn:active{transform:scale(.96);}
+  .rebirth-row{display:flex; flex-direction:column; align-items:center; gap:4px; margin-top:2px;}
+  .rebirth-btn{
+    font-family:'Zen Maru Gothic',sans-serif; font-weight:700; font-size:.76rem; color:#fff;
+    background:linear-gradient(180deg,var(--lavender-deep),#7A5FC4); border:none; border-radius:999px;
+    padding:9px 18px; cursor:pointer; box-shadow:var(--shadow);
+  }
+  .rebirth-btn:active{transform:scale(.96);}
+  .rebirth-note{font-size:.62rem; color:var(--ink-soft); text-align:center;}
+  .customize-stack{display:flex; flex-direction:column; gap:10px;}
+  .dex-grid{display:grid; grid-template-columns:repeat(6,1fr); gap:6px;}
+  .dex-badge{
+    aspect-ratio:1; border-radius:10px; background:var(--lavender); border:1px solid var(--line);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:.85rem; gap:2px;
+  }
+  .dex-badge.locked{opacity:.35; filter:grayscale(1); font-size:.62rem;}
+  .dex-badge.rare{box-shadow:0 0 0 2px var(--gold) inset;}
+  .dex-badge .dot{width:7px; height:7px; border-radius:50%; background:var(--dot,#ccc);}
+  .streamer-sway{animation:streamersway 3s ease-in-out infinite; transform-origin:100px 60px;}
+  @keyframes streamersway{0%,100%{transform:rotate(-4deg);}50%{transform:rotate(4deg);}}
+  .glitter-dot{animation:twinkle 2.2s ease-in-out infinite; transform-origin:center;}
+  .glitter-dot:nth-child(2){animation-delay:.5s;} .glitter-dot:nth-child(3){animation-delay:1s;}
+
+  section.panel{background:var(--card-bg); border:1px solid var(--line); border-radius:20px; padding:14px; box-shadow:var(--shadow);}
+  section.panel h2{font-size:.85rem; margin:0 0 10px; display:flex; align-items:center; gap:6px;}
+
+  .shop-list{display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;}
+  .shop-item{
+    flex:0 0 132px; scroll-snap-align:start; min-height:150px;
+    display:flex; flex-direction:column; align-items:center; justify-content:space-between; text-align:center; gap:5px;
+    padding:10px 8px; border:1px solid var(--line); border-radius:14px;
+  }
+  .shop-item .ic{font-size:1.5rem;}
+  .shop-item .info{width:100%;}
+  .shop-item .info .nm{font-size:.74rem; font-weight:700;}
+  .shop-item .info .ds{font-size:.62rem; color:var(--ink-soft); white-space:normal; margin-top:2px;}
+  .shop-item .info .owned{font-size:.6rem; color:var(--mint-deep); font-variant-numeric:tabular-nums; margin-top:2px;}
+  .shop-item.locked-item{opacity:.55;}
+  .shop-item.locked-item .ic{filter:grayscale(1);}
+  .buy-btn{
+    font-family:'Zen Maru Gothic',sans-serif; font-weight:700; font-size:.72rem; white-space:nowrap;
+    background:var(--mint-deep); color:#fff; border:none; border-radius:999px; padding:8px 12px; cursor:pointer;
+    width:100%;
+  }
+  .buy-btn:disabled{background:var(--line); color:var(--ink-soft); cursor:not-allowed;}
+  .buy-btn .cost{display:block; font-variant-numeric:tabular-nums;}
+
+  .ach-strip{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; flex-wrap:wrap;}
+  .ach-badge{
+    flex-shrink:0; width:74px; text-align:center; padding:8px 4px; border-radius:14px;
+    background:var(--lavender); border:1px solid var(--line); font-size:.6rem;
+  }
+  .ach-badge.locked{filter:grayscale(1); opacity:.45;}
+  .ach-badge .em{font-size:1.3rem; display:block; margin-bottom:2px;}
+
+  .comment-list{display:flex; flex-direction:column; gap:8px; max-height:170px; overflow-y:auto;}
+  .comment{display:flex; gap:8px; align-items:flex-start;}
+  .comment .av{width:26px; height:26px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.8rem;}
+  .comment .body{font-size:.72rem; line-height:1.4;}
+  .comment .user{font-weight:700; margin-right:4px;}
+  .comment .time{color:var(--ink-soft); font-size:.6rem; margin-left:4px;}
+
+  footer{text-align:center; font-size:.62rem; color:var(--ink-soft); line-height:1.6;}
+  footer a{color:var(--blush-deep); cursor:pointer; text-decoration:underline;}
+
+  .overlay{position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px;}
+  .modal{background:var(--card-bg); border-radius:22px; padding:22px; max-width:340px; width:100%; box-shadow:var(--shadow); text-align:center;}
+  .modal h3{font-family:'Mochiy Pop One',sans-serif; font-size:1.1rem; margin:0 0 8px; color:var(--blush-deep);}
+  .modal p{font-size:.8rem; color:var(--ink-soft); margin:0 0 14px;}
+  .modal input{
+    width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:var(--cream);
+    color:var(--ink); font-family:inherit; font-size:.9rem; text-align:center; margin-bottom:14px;
+  }
+  .modal .primary-btn{
+    width:100%; padding:12px; border:none; border-radius:999px; background:var(--blush-deep); color:#fff;
+    font-family:'Mochiy Pop One',sans-serif; font-size:.85rem; cursor:pointer;
+  }
+
+  #toastWrap{position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:200; display:flex; flex-direction:column; gap:6px; align-items:center; pointer-events:none;}
+  .toast{
+    background:var(--ink); color:var(--cream); font-size:.74rem; padding:8px 16px; border-radius:999px;
+    box-shadow:0 6px 18px rgba(0,0,0,.25); animation:toastIn .3s ease, toastOut .3s ease 2.4s forwards; max-width:80vw; text-align:center;
+  }
+  @keyframes toastIn{from{opacity:0; transform:translateY(-10px);}to{opacity:1; transform:translateY(0);}}
+  @keyframes toastOut{to{opacity:0; transform:translateY(-10px);}}
+
+  @media (prefers-reduced-motion: reduce){
+    #grpBlobBody,#grpRealForm,.blink,.sparkle-grp path,.ray-grp,.aura,.bg-blob,.bg-star,.streamer-sway,.glitter-dot{animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-blob b1"></div>
+<div class="bg-blob b2"></div>
+<div class="bg-blob b3"></div>
+<div class="bg-star s1">✦</div>
+<div class="bg-star s2">✦</div>
+<div class="bg-star s3">✦</div>
+<div class="bg-star s4">✦</div>
+<div id="toastWrap"></div>
+
+<div class="app">
+ <div class="sticky-top">
+  <header>
+    <div class="title-wrap">
+      <h1>かどっこアイドル</h1>
+      <div class="tagline">見てるだけでも、育てても楽しい放置育成</div>
+      <a class="brand-tag" href="https://www.vilc.tokyo/" target="_blank" rel="noopener">VILC Presents</a>
+    </div>
+    <div class="icon-group">
+      <a class="icon-btn" id="shareIconBtn" href="#" target="_blank" rel="noopener" title="Xでシェア">🐦</a>
+      <button class="icon-btn" id="muteBtn" title="音を切り替え">🔊</button>
+    </div>
+  </header>
+
+  <div class="ticker">
+    <span class="tag">SNS速報</span>
+    <span id="tickerText">今日も隅っこで練習中…</span>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-chip"><div class="label">♡ ハート</div><div class="value" id="heartsVal">0</div></div>
+    <div class="stat-chip"><div class="label">毎秒ファン</div><div class="value" id="fpsVal">0</div></div>
+    <div class="stat-chip"><div class="label">総ファン数</div><div class="value" id="lifetimeVal">0</div></div>
+  </div>
+
+  <div class="stage-card s0" id="stageCard">
+    <div class="stage-name-pill" id="stageNamePill">Stage 1 <b>卵ごもり</b></div>
+    <div id="stageArea" title="タップして応援！">
+      <svg class="room-bg" viewBox="0 0 200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="100" height="152" fill="var(--room-wall-l,#EFE6DA)"/>
+        <rect x="100" y="0" width="100" height="152" fill="var(--room-wall-r,#E3D6C4)"/>
+        <rect x="0" y="150" width="200" height="50" fill="var(--room-floor,#C9B896)"/>
+        <rect x="0" y="148" width="200" height="4" fill="rgba(0,0,0,.1)"/>
+        <rect x="128" y="18" width="52" height="62" rx="6" fill="var(--room-window,#FCE8B0)"/>
+        <rect x="128" y="18" width="52" height="62" rx="6" fill="none" stroke="#fff" stroke-width="3" opacity=".55"/>
+        <line x1="154" y1="18" x2="154" y2="80" stroke="#fff" stroke-width="2" opacity=".45"/>
+        <line x1="128" y1="49" x2="180" y2="49" stroke="#fff" stroke-width="2" opacity=".45"/>
+        <rect x="10" y="58" width="34" height="6" rx="2" fill="rgba(255,255,255,.45)"/>
+        <path d="M24 58 C15 58 13 46 24 44 C35 46 33 58 24 58 Z" fill="#7FBF8F"/>
+        <rect x="19" y="58" width="10" height="4" fill="#B08968"/>
+        <ellipse cx="100" cy="167" rx="55" ry="11" fill="rgba(255,255,255,.22)"/>
+      </svg>
+      <div class="speech-bubble" id="speechBubble"></div>
+      <svg class="char-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <radialGradient id="auraGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FDE79A" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="#FDE79A" stop-opacity="0"/>
+        </radialGradient>
+
+        <ellipse class="aura" id="grpAura" cx="100" cy="118" rx="82" ry="82" fill="url(#auraGrad)" style="display:none"/>
+        <g class="ray-grp" id="grpRays" style="display:none">
+          <g fill="#FFE9A8" opacity="0.55">
+            <polygon points="100,100 108,10 92,10"/>
+            <polygon points="100,100 190,60 178,78"/>
+            <polygon points="100,100 190,140 178,122"/>
+            <polygon points="100,100 108,190 92,190"/>
+            <polygon points="100,100 10,140 22,122"/>
+            <polygon points="100,100 10,60 22,78"/>
+          </g>
+        </g>
+
+        <g id="grpBodyScale">
+        <g id="grpBlobBody">
+          <ellipse cx="70" cy="128" rx="12" ry="8" fill="var(--body-color)"/>
+          <ellipse cx="130" cy="128" rx="12" ry="8" fill="var(--body-color)"/>
+          <g id="grpArmL" class="arm-wig"><ellipse cx="52" cy="112" rx="11" ry="16" fill="var(--body-color)"/></g>
+          <g id="grpArmR" class="arm-wig"><ellipse cx="148" cy="112" rx="11" ry="16" fill="var(--body-color)"/></g>
+
+          <path d="M100 40 C150 40 168 78 168 112 C168 152 138 172 100 172 C62 172 32 152 32 112 C32 78 50 40 100 40 Z" fill="var(--body-color)"/>
+
+          <g id="grpCollar" style="display:none">
+            <path d="M58 148 Q100 174 142 148 L142 159 Q100 186 58 159 Z" fill="#fff" opacity="0.92"/>
+            <path d="M58 148 Q100 174 142 148" stroke="var(--ribbon-color)" stroke-width="4" fill="none" stroke-linecap="round"/>
+          </g>
+
+          <g id="grpEars">
+            <circle cx="72" cy="52" r="12" fill="var(--body-color)"/>
+            <circle cx="128" cy="52" r="12" fill="var(--body-color)"/>
+          </g>
+          <g id="grpEarsPoint" style="display:none">
+            <path d="M64 54 C58 32 80 28 78 48 Z" fill="var(--body-color)"/>
+            <path d="M136 54 C142 32 120 28 122 48 Z" fill="var(--body-color)"/>
+          </g>
+
+          <g id="grpShell" style="display:none">
+            <path d="M36 118 C36 152 65 170 100 170 C135 170 164 152 164 118 L164 128 C164 158 134 176 100 176 C66 176 36 158 36 128 Z" fill="var(--shell-color)"/>
+            <path d="M60 118 l8 10 l-6 8 l9 9" stroke="#fff" stroke-width="2" fill="none" opacity=".5"/>
+          </g>
+
+          <g id="grpEyesClosed">
+            <path d="M78 100 q8 8 16 0" stroke="#5B4335" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+            <path d="M106 100 q8 8 16 0" stroke="#5B4335" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+          </g>
+          <g id="grpEyesOpen" class="eyes-open blink" style="display:none">
+            <circle cx="82" cy="100" r="5.5" fill="#5B4335"/>
+            <circle cx="118" cy="100" r="5.5" fill="#5B4335"/>
+            <circle cx="84" cy="98" r="1.6" fill="#fff"/>
+            <circle cx="120" cy="98" r="1.6" fill="#fff"/>
+          </g>
+          <ellipse cx="70" cy="112" rx="8" ry="5" fill="var(--blush)" opacity=".85"/>
+          <ellipse cx="130" cy="112" rx="8" ry="5" fill="var(--blush)" opacity=".85"/>
+          <path d="M92 116 q8 7 16 0" stroke="#5B4335" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+
+          <g id="grpRibbon" style="display:none">
+            <path d="M100 40 L84 26 L84 46 Z" fill="var(--ribbon-color)"/>
+            <path d="M100 40 L116 26 L116 46 Z" fill="var(--ribbon-color)"/>
+            <circle cx="100" cy="40" r="5" fill="var(--ribbon-color)"/>
+          </g>
+
+          <g id="grpMic" style="display:none">
+            <rect x="46" y="98" width="7" height="20" rx="3.5" fill="#8A7365"/>
+            <ellipse cx="49.5" cy="94" rx="7" ry="9" fill="#3A322F"/>
+          </g>
+
+          <g id="grpCrownSmall" style="display:none">
+            <path d="M84 30 L90 16 L100 26 L110 16 L116 30 Z" fill="var(--gold)"/>
+            <circle cx="100" cy="26" r="2.4" fill="var(--gold-deep)"/>
+          </g>
+          <g id="grpCrownBig" style="display:none">
+            <path d="M78 32 L86 12 L100 26 L114 12 L122 32 Z" fill="var(--gold)"/>
+            <circle cx="100" cy="24" r="3.2" fill="var(--gold-deep)"/>
+            <circle cx="86" cy="30" r="2.2" fill="var(--gold-deep)"/>
+            <circle cx="114" cy="30" r="2.2" fill="var(--gold-deep)"/>
+          </g>
+
+          <g id="grpStreamers" class="streamer-sway" style="display:none">
+            <path d="M82 34 C58 30 44 44 38 64" stroke="var(--ribbon-color)" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M118 34 C142 30 156 44 162 64" stroke="var(--ribbon-color)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          </g>
+
+          <g id="grpBodyGlitter" style="display:none">
+            <circle class="glitter-dot" cx="78" cy="132" r="2.4" fill="#fff"/>
+            <circle class="glitter-dot" cx="122" cy="140" r="2" fill="#fff"/>
+            <circle class="glitter-dot" cx="100" cy="150" r="2.2" fill="#FDE79A"/>
+          </g>
+        </g>
+        </g>
+
+        <g id="grpRealScale" style="display:none">
+        <g id="grpRealForm">
+          <ellipse cx="100" cy="186" rx="46" ry="7" fill="#000" opacity="0.15"/>
+
+          <path d="M78 40 C74 16 126 16 122 40 C126 30 128 46 122 52 L78 52 C72 46 74 30 78 40 Z" fill="var(--hair-color)"/>
+          <path d="M80 44 C56 48 44 74 48 106" class="streamer-sway" stroke="var(--hair-color)" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <path d="M120 44 C144 48 156 74 152 106" class="streamer-sway" stroke="var(--hair-color)" stroke-width="9" fill="none" stroke-linecap="round"/>
+
+          <path d="M118 74 Q145 66 150 44" stroke="var(--body-color)" stroke-width="11" stroke-linecap="round" fill="none"/>
+
+          <g id="grpRealOutfitIdol">
+            <path d="M76 100 C68 118 60 138 56 150 L144 150 C140 138 132 118 124 100 Z" fill="var(--ribbon-color)"/>
+            <path d="M84 108 C78 122 72 138 68 148 L132 148 C128 138 122 122 116 108 Z" fill="#fff" opacity="0.22"/>
+            <rect x="82" y="148" width="15" height="8" rx="4" fill="var(--ribbon-color)"/>
+            <rect x="103" y="148" width="15" height="8" rx="4" fill="var(--ribbon-color)"/>
+            <rect x="84" y="150" width="11" height="34" rx="5" fill="#fff"/>
+            <rect x="105" y="150" width="11" height="34" rx="5" fill="#fff"/>
+            <path d="M82 66 Q100 58 118 66 L122 102 Q100 110 78 102 Z" fill="#fff"/>
+            <path d="M82 70 L118 96" stroke="var(--ribbon-color)" stroke-width="4" stroke-linecap="round"/>
+          </g>
+
+          <g id="grpRealOutfitSuit" style="display:none">
+            <path d="M80 148 L78 184 L92 184 L94 150 Z" fill="#3A3A42"/>
+            <path d="M120 148 L122 184 L108 184 L106 150 Z" fill="#3A3A42"/>
+            <rect x="84" y="150" width="10" height="8" fill="#22222A"/>
+            <rect x="106" y="150" width="10" height="8" fill="#22222A"/>
+            <path d="M80 64 Q100 56 120 64 L124 104 Q100 114 76 104 Z" fill="#43434D"/>
+            <path d="M92 64 L100 100 L108 64" stroke="#DADADA" stroke-width="3" fill="none"/>
+            <path d="M92 64 L108 64 L100 74 Z" fill="#C0392B"/>
+          </g>
+
+          <rect x="94" y="58" width="12" height="10" fill="var(--body-color)"/>
+          <circle cx="100" cy="46" r="21" fill="var(--body-color)"/>
+
+          <path d="M80 36 Q100 24 120 36 Q118 30 100 28 Q82 30 80 36 Z" fill="var(--hair-color)"/>
+          <path d="M94 22 l2 6 l6 2 l-6 2 l-2 6 l-2 -6 l-6 -2 l6 -2 Z" fill="var(--gold)"/>
+
+          <g id="grpRealEyesNormal">
+            <circle cx="92" cy="46" r="3" fill="#5B4335"/>
+            <circle cx="108" cy="46" r="3" fill="#5B4335"/>
+            <circle cx="93" cy="45" r="0.9" fill="#fff"/>
+            <circle cx="109" cy="45" r="0.9" fill="#fff"/>
+          </g>
+          <g id="grpRealEyesSleepy" style="display:none">
+            <path d="M88 46 q4 3 8 0" stroke="#5B4335" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <path d="M104 46 q4 3 8 0" stroke="#5B4335" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          </g>
+          <ellipse cx="88" cy="52" rx="4" ry="2.5" fill="var(--blush)" opacity=".85"/>
+          <ellipse cx="112" cy="52" rx="4" ry="2.5" fill="var(--blush)" opacity=".85"/>
+          <path d="M95 54 q5 4 10 0" stroke="#5B4335" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+          <g id="grpRealRareFx" style="display:none">
+            <circle cx="100" cy="100" r="70" fill="none" stroke="var(--gold)" stroke-width="2" opacity="0.35"/>
+            <path class="glitter-dot" d="M64 60 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2 Z" fill="var(--gold)"/>
+            <path class="glitter-dot" d="M140 62 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2 Z" fill="var(--gold)"/>
+          </g>
+          <g id="grpRealSnsFx" style="display:none" stroke="#4FD8FF" fill="none" stroke-linecap="round">
+            <path d="M136 66 a12 12 0 0 1 17 0" stroke-width="2.4"/>
+            <path d="M140 70 a7 7 0 0 1 10 0" stroke-width="2.2"/>
+            <circle cx="146" cy="76" r="1.8" fill="#4FD8FF" stroke="none"/>
+          </g>
+
+          <path d="M82 74 Q58 82 56 106" stroke="var(--body-color)" stroke-width="11" stroke-linecap="round" fill="none"/>
+          <rect x="50" y="100" width="7" height="18" rx="3.5" fill="#8A7365"/>
+          <ellipse cx="53.5" cy="97" rx="7" ry="8.5" fill="#3A322F"/>
+        </g>
+        </g>
+
+        <g class="sparkle-grp" id="grpSparkle" style="display:none" fill="var(--gold)">
+          <path d="M40 70 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3 Z"/>
+          <path d="M164 90 l2.5 6.5 l6.5 2.5 l-6.5 2.5 l-2.5 6.5 l-2.5 -6.5 l-6.5 -2.5 l6.5 -2.5 Z"/>
+          <path d="M150 50 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2 Z"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label"><span id="progLabel">つぎのステージまで</span><span id="progPct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+
+    <button class="cheer-btn" id="cheerBtn">♡ おうえんする</button>
+  </div>
+ </div>
+
+  <section class="panel">
+   <div class="customize-stack">
+    <div class="swatch-row">
+      <span class="lbl">きせかえ:</span>
+      <button class="swatch active" data-color="#FF8FAC" style="background:#FF8FAC"></button>
+      <button class="swatch" data-color="#5FBFA0" style="background:#5FBFA0"></button>
+      <button class="swatch" data-color="#A784E8" style="background:#A784E8"></button>
+      <button class="swatch" data-color="#DA9E2C" style="background:#DA9E2C"></button>
+    </div>
+
+    <div class="share-row">
+      <a id="shareLink" class="share-btn" href="#" target="_blank" rel="noopener">🐦 育成状況をXでシェア・宣伝する</a>
+    </div>
+
+    <div class="rebirth-row" id="rebirthRow" hidden>
+      <button class="rebirth-btn" id="rebirthBtn">🔄 転生してもう一度そだてる</button>
+      <div class="rebirth-note" id="rebirthNote"></div>
+    </div>
+   </div>
+  </section>
+
+  <section class="panel">
+    <h2>🎀 れっすん & アイテム</h2>
+    <div class="shop-list" id="shopList"></div>
+  </section>
+
+  <section class="panel">
+    <h2>📖 キャラクター図鑑</h2>
+    <div class="dex-grid" id="dexGrid"></div>
+  </section>
+
+  <section class="panel">
+    <h2>🏆 じっせき</h2>
+    <div class="ach-strip" id="achList"></div>
+  </section>
+
+  <section class="panel">
+    <h2>💬 ファンの声</h2>
+    <div class="comment-list" id="commentList"></div>
+  </section>
+
+  <footer>
+    ※SNS速報・ファンの声はゲーム内演出のシミュレーションです。実在のSNSとは連携していません。<br>
+    <a id="resetLink">はじめからやり直す</a> ・ <a href="https://www.vilc.tokyo/">VILCトップへ</a>
+  </footer>
+</div>
+
+<div class="overlay" id="nameOverlay" hidden>
+  <div class="modal">
+    <h3>ようこそ、かどっこへ</h3>
+    <p>すみっこが好きな内気な子に、きみだけの名前をつけてね。</p>
+    <input id="nameInput" maxlength="8" placeholder="もこ">
+    <button class="primary-btn" id="nameStartBtn">この名前でスタート！</button>
+  </div>
+</div>
+
+<div class="overlay" id="offlineOverlay" hidden>
+  <div class="modal">
+    <h3>おかえりなさい！</h3>
+    <p id="offlineText"></p>
+    <button class="primary-btn" id="offlineClaimBtn">受け取る</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var BASE_STAGES = [
+    {name:'卵ごもり', min:0},
+    {name:'めざめ', min:50},
+    {name:'よちよち期', min:300},
+    {name:'みならい', min:1500},
+    {name:'プレデビュー', min:8000},
+    {name:'デビュー', min:40000},
+    {name:'ちょい人気', min:200000},
+    {name:'人気アイドル', min:1000000},
+    {name:'全国区アイドル', min:6000000},
+    {name:'ドームツアー級', min:35000000},
+    {name:'伝説のアイドル', min:200000000},
+    {name:'殿堂入り', min:1200000000},
+    {name:'神話級アイドル', min:7000000000},
+    {name:'???（覚醒）', min:40000000000}
+  ];
+  var REAL_FORM_INDEX = BASE_STAGES.length - 1;
+  var INFINITE_RATIO = 6;
+
+  function getStage(idx){
+    if(idx < BASE_STAGES.length) return BASE_STAGES[idx];
+    var over = idx - (BASE_STAGES.length - 1);
+    var min = Math.round(BASE_STAGES[BASE_STAGES.length-1].min * Math.pow(INFINITE_RATIO, over));
+    return {name:'真・伝説 Lv.'+over, min:min};
+  }
+  function stageIndexFor(fans){
+    var idx = 0;
+    while(getStage(idx+1).min <= fans){ idx++; }
+    return idx;
+  }
+  function scaleForStage(idx){ return Math.min(0.7 + idx*0.045, 1.5); }
+  function bodyColorForStage(idx){
+    var c = ['#F0D9BE','#FFE3C7','#FFDCE0','#FFD1E6','#FFC9DA','#F6D9FF','#EBD1FF','#FFE9B8','#FFEFC2'];
+    return c[Math.min(idx, c.length-1)];
+  }
+  var ROOM_PALETTES = [
+    {wallL:'#EFE6DA', wallR:'#E3D6C4', floor:'#C9B896', window:'#FCE8B0'},
+    {wallL:'#FDEFE1', wallR:'#F8E2C9', floor:'#E9CFAE', window:'#FFF3C4'},
+    {wallL:'#FFEAF0', wallR:'#FFD9E4', floor:'#F3C0CF', window:'#FFEFD8'},
+    {wallL:'#F3E7FF', wallR:'#E5D0FB', floor:'#D3B7EE', window:'#FFF6E0'},
+    {wallL:'#E9D3FF', wallR:'#D2AEF2', floor:'#B98CE0', window:'#FFF0C2'},
+    {wallL:'#8E68AC', wallR:'#6E4A8C', floor:'#4F3468', window:'#FFE9A8'},
+    {wallL:'#4A2E63', wallR:'#331F49', floor:'#22132F', window:'#FFD97A'}
+  ];
+  function roomPaletteForStage(idx){ return ROOM_PALETTES[Math.min(idx,6)]; }
+
+  var UPGRADES = [
+    {id:'lesson', name:'レッスン特訓', desc:'ファン/秒 +1', ic:'🎤', base:10, mul:1.14, kind:'fps', amt:1, unlock:0},
+    {id:'cheerService', name:'ファンサービス', desc:'タップの♡獲得 +1', ic:'✨', base:15, mul:1.14, kind:'click', amt:1, unlock:0},
+    {id:'snsPost', name:'SNS投稿', desc:'ファン/秒 +5・たまにバズる', ic:'📱', base:120, mul:1.16, kind:'fps', amt:5, unlock:0},
+    {id:'manager', name:'マネージャー雇用', desc:'ファン/秒 +20', ic:'🧑', base:800, mul:1.15, kind:'fps', amt:20, unlock:2},
+    {id:'rehearsal', name:'リハーサル効率化', desc:'ファン/秒 +8%（乗算）', ic:'📈', base:5000, mul:1.35, kind:'fpsMult', amt:0.08, unlock:3},
+    {id:'charisma', name:'カリスマ性強化', desc:'タップ獲得 +15%（乗算）', ic:'💖', base:8000, mul:1.35, kind:'clickMult', amt:0.15, unlock:3},
+    {id:'billboard', name:'駅前ビジョン広告', desc:'ファン/秒 +100', ic:'📺', base:6000, mul:1.16, kind:'fps', amt:100, unlock:4},
+    {id:'talkShow', name:'冠トーク番組', desc:'タップの♡獲得 +5', ic:'🎬', base:9000, mul:1.15, kind:'click', amt:5, unlock:5},
+    {id:'fanclub', name:'ファンクラブ発足', desc:'ファン/秒 +600', ic:'💌', base:45000, mul:1.16, kind:'fps', amt:600, unlock:6},
+    {id:'tour', name:'全国ツアー', desc:'ファン/秒 +4,000', ic:'🚌', base:350000, mul:1.17, kind:'fps', amt:4000, unlock:7},
+    {id:'goldenMic', name:'ゴールデンマイク', desc:'ファン/秒 +25,000', ic:'🏆', base:3000000, mul:1.17, kind:'fps', amt:25000, unlock:9},
+    {id:'domeTour', name:'ドームツアー', desc:'ファン/秒 +200,000', ic:'🏟', base:35000000, mul:1.18, kind:'fps', amt:200000, unlock:10},
+    {id:'legendStage', name:'伝説のステージ', desc:'ファン/秒 +2,000,000', ic:'🌟', base:500000000, mul:1.18, kind:'fps', amt:2000000, unlock:11},
+    {id:'mythicShow', name:'神話級公演', desc:'ファン/秒 +20,000,000', ic:'🔮', base:6000000000, mul:1.19, kind:'fps', amt:20000000, unlock:12},
+    {id:'cosmicLive', name:'次元を超えたライブ', desc:'ファン/秒 +2億', ic:'🌌', base:80000000000, mul:1.2, kind:'fps', amt:200000000, unlock:13}
+  ];
+
+  var ACHIEVEMENTS = [
+    {id:'firstclick', em:'👆', name:'はじめの一歩', check:function(s){return s.totalClicks>=1;}},
+    {id:'fan100', em:'🌱', name:'プチ人気', check:function(s){return s.lifetimeFans>=100;}},
+    {id:'debut', em:'🎤', name:'デビュー達成', check:function(s){return stageIndexFor(s.lifetimeFans)>=5;}},
+    {id:'fan10000', em:'🔥', name:'ブレイク中', check:function(s){return s.lifetimeFans>=10000;}},
+    {id:'fan1m', em:'📈', name:'ミリオンヒット', check:function(s){return s.lifetimeFans>=1000000;}},
+    {id:'legend', em:'👑', name:'伝説へ', check:function(s){return stageIndexFor(s.lifetimeFans)>=10;}},
+    {id:'fan1oku', em:'💎', name:'億超えアイドル', check:function(s){return s.lifetimeFans>=100000000;}},
+    {id:'realform', em:'🌟', name:'覚醒', check:function(s){return stageIndexFor(s.lifetimeFans)>=REAL_FORM_INDEX;}},
+    {id:'click100', em:'💪', name:'応援マスター', check:function(s){return s.totalClicks>=100;}},
+    {id:'click1000', em:'🥇', name:'応援の鬼', check:function(s){return s.totalClicks>=1000;}},
+    {id:'play10min', em:'⏰', name:'常連さん', check:function(s){return s.playSeconds>=600;}},
+    {id:'play1hour', em:'🛋', name:'ずっと見てる人', check:function(s){return s.playSeconds>=3600;}},
+    {id:'buzz10', em:'📡', name:'バズり職人', check:function(s){return s.buzzCount>=10;}},
+    {id:'allTier1', em:'🎀', name:'下積み完了', check:function(s){return s.upgrades.lesson>=10 && s.upgrades.cheerService>=10 && s.upgrades.snsPost>=10;}},
+    {id:'firstRebirth', em:'🔄', name:'生まれ変わり', check:function(s){return s.rebirthCount>=1;}},
+    {id:'rareGet', em:'⭐', name:'レア個体発見', check:function(s){return Object.keys(s.dex||{}).some(function(k){return k.indexOf('_rare_')>=0;});}}
+  ];
+
+  var TICKER_TEMPLATES = [
+    '『{name}』が今日も隅っこで練習中…見守りたい',
+    '#{name}のがんばり が静かに話題になりつつある',
+    '『{name}』のファンが{fans}人を突破！',
+    '『{name}』を見つけた人「尊すぎる…」と絶賛',
+    '深夜のSNSで『{name}』の目撃情報じわじわ増加中',
+    '『{name}』グッズが欲しいという声が続出'
+  ];
+  var TICKER_BUZZ = [
+    '🔥バズってます🔥『{name}』のタグが急上昇ワード入り！',
+    '🔥拡散中🔥『{name}』のクリップが流れてきた人続出'
+  ];
+  var TICKER_STAGE = '🎉『{name}』が{stage}にランクアップ！！';
+  var TICKER_REALFORM = '🌟『{name}』が思いがけない"覚醒"を遂げた…！ゆるかわからアイドルの姿へ';
+
+  var COMMENT_USERS = ['コーナー巡回中','ぬくもり隊長','推し活おばけ','夜ふかしファン','ひなたぼっこ勢','匿名の応援団','いつもの通行人','布団から応援'];
+  var COMMENT_TEXT = [
+    'かわいすぎる…画面から出てきて',
+    '今日も{name}が尊い',
+    'ずっと見ていられる',
+    '{name}ちゃん推せる…！',
+    'この子の成長record見守るの好き',
+    '仕事の合間に癒されてる',
+    '{name}のファンになります',
+    'このコーナー、平和すぎる',
+    '好きすぎて滅',
+    '{name}尊すぎてギュンです',
+    '気づいたら1時間見てた…あたしドパガキかも',
+    '{name}の供給過多で成仏しそう',
+    'かわいいがすぎる、無理'
+  ];
+  var AVATAR_BG = ['var(--blush)','var(--mint)','var(--lavender)','var(--gold)'];
+  var SHARE_URL = 'https://www.vilc.tokyo/kadokko-idol/';
+
+  var TEMPERAMENTS = [
+    {id:'ganbari', em:'🔥', name:'がんばり屋'},
+    {id:'nonbiri', em:'☁️', name:'マイペース'},
+    {id:'sns', em:'📱', name:'SNS映え'}
+  ];
+  var PALETTES = [
+    {name:'ブラウン', hex:'#6B4A3A'},
+    {name:'エメラルド', hex:'#3F7A63'},
+    {name:'パープル', hex:'#5A4A7A'},
+    {name:'ゴールド', hex:'#8A6A1E'},
+    {name:'シルバー', hex:'#5A5A5A'}
+  ];
+  var RESULT_NAMES = {
+    ganbari_normal: 'スタア街道アイドル',
+    ganbari_rare: '伝説の努力家',
+    nonbiri_normal: 'マイペースアイドル',
+    nonbiri_rare: '謎の大物',
+    sns_normal: 'バズり系アイドル',
+    sns_rare: '都市伝説アイドル'
+  };
+  function determineTemperament(s){
+    if(s.buzzCount >= 3) return 'sns';
+    var total = s.tapEarned + s.idleEarned;
+    var ratio = total > 0 ? s.tapEarned/total : 0;
+    return ratio > 0.35 ? 'ganbari' : 'nonbiri';
+  }
+
+  function formatNum(n){
+    n = Math.floor(n);
+    var units = [{v:1e16,s:'京'},{v:1e12,s:'兆'},{v:1e8,s:'億'},{v:1e4,s:'万'}];
+    for(var i=0;i<units.length;i++){
+      if(n>=units[i].v){
+        var v = n/units[i].v;
+        var str = Number.isInteger(v) ? String(v) : v.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
+        return str+units[i].s;
+      }
+    }
+    return n.toLocaleString('ja-JP');
+  }
+  function upgradeCost(u, owned){ return Math.ceil(u.base * Math.pow(u.mul, owned)); }
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function fillTpl(tpl, s){
+    var stName = getStage(stageIndexFor(s.lifetimeFans)).name;
+    return tpl.replace(/{name}/g, s.name).replace(/{fans}/g, formatNum(s.lifetimeFans)).replace(/{stage}/g, stName);
+  }
+
+  var SAVE_KEY = 'kadokko_idol_save_v3';
+  function defaultState(){
+    var upg = {};
+    UPGRADES.forEach(function(u){ upg[u.id] = 0; });
+    return {
+      name:'', hearts:0, lifetimeFans:0, totalClicks:0, playSeconds:0, buzzCount:0,
+      upgrades:upg,
+      achievements:{}, ribbonColor:'#FF8FAC', muted:false,
+      buzzUntil:0, lastSeen:Date.now(), lastStageSeen:0,
+      rebirthCount:0, dex:{}, temperament:null, tapEarned:0, idleEarned:0,
+      currentResultId:null, resultRare:null, resultPalette:null
+    };
+  }
+
+  var state = null;
+  var audioCtx = null;
+
+  function loadState(){
+    var s = null;
+    try{
+      var raw = localStorage.getItem(SAVE_KEY);
+      if(raw) s = JSON.parse(raw);
+    }catch(e){}
+    if(!s) return null;
+    var d = defaultState();
+    for(var k in d){ if(s[k]===undefined) s[k]=d[k]; }
+    if(!s.upgrades) s.upgrades = d.upgrades;
+    UPGRADES.forEach(function(u){ if(s.upgrades[u.id]===undefined) s.upgrades[u.id]=0; });
+    return s;
+  }
+
+  function save(){
+    try{ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+  function rebirthMult(){ return 1 + state.rebirthCount*0.05; }
+  function computeFps(){
+    var f = 0, mult = 1;
+    UPGRADES.forEach(function(u){
+      var owned = state.upgrades[u.id];
+      if(u.kind==='fps') f += u.amt * owned;
+      if(u.kind==='fpsMult') mult += u.amt * owned;
+    });
+    return f * mult * rebirthMult();
+  }
+  function computePerClick(){
+    var c = 1, mult = 1;
+    UPGRADES.forEach(function(u){
+      var owned = state.upgrades[u.id];
+      if(u.kind==='click') c += u.amt * owned;
+      if(u.kind==='clickMult') mult += u.amt * owned;
+    });
+    return c * mult * rebirthMult();
+  }
+  function isBuzzing(){ return Date.now() < state.buzzUntil; }
+
+  function playTone(freq, dur, type, delay){
+    if(state.muted) return;
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      var t0 = audioCtx.currentTime + (delay||0);
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = type||'sine';
+      osc.frequency.setValueAtTime(freq, t0);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.15, t0+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(t0); osc.stop(t0+dur+0.02);
+    }catch(e){}
+  }
+  function sfxPop(){ playTone(700,0.12,'sine'); }
+  function sfxBuy(){ playTone(500,0.1,'triangle'); playTone(720,0.12,'triangle',0.06); }
+  function sfxStageUp(){ playTone(523,0.18,'triangle'); playTone(659,0.18,'triangle',0.14); playTone(784,0.28,'triangle',0.28); }
+  function sfxBuzz(){ playTone(880,0.1,'square'); playTone(1046,0.16,'square',0.09); }
+
+  var $ = function(id){ return document.getElementById(id); };
+
+  function toast(msg){
+    var wrap = $('toastWrap');
+    var el = document.createElement('div');
+    el.className='toast'; el.textContent = msg;
+    wrap.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 2800);
+  }
+
+  var bubbleTimer = null;
+  function showBubble(text){
+    var el = $('speechBubble');
+    if(bubbleTimer) clearTimeout(bubbleTimer);
+    el.textContent = text;
+    el.classList.add('show');
+    bubbleTimer = setTimeout(function(){ el.classList.remove('show'); }, 1900);
+  }
+  var BUBBLE_TAP = ['♪','うれしい♡','えへへ','ありがとう!','わーい','もっと♡'];
+  var BUBBLE_IDLE = ['ぽけー…','ねむいな…','今日もいい天気','見ててくれるの?','がんばるぞ!','ふぅ…','スン','かわいいだけじゃダメですか？'];
+  var BUBBLE_IDLE_BY_TEMPERAMENT = {
+    ganbari: ['もっと練習する!','負けないぞ!','次のステージへ!'],
+    nonbiri: ['まったり…','急がなくていいよね','ふわぁ…'],
+    sns: ['バズりたいな','見て見て〜','#かどっこ']
+  };
+
+  function spawnHeartParticle(x, y){
+    var stageArea = $('stageArea');
+    var rect = stageArea.getBoundingClientRect();
+    var el = document.createElement('span');
+    el.className='particle';
+    el.textContent = pick(['♡','💗','✨']);
+    el.style.left = (x-rect.left-8)+'px';
+    el.style.top = (y-rect.top-8)+'px';
+    el.style.setProperty('--dx', (Math.random()*40-20)+'px');
+    stageArea.appendChild(el);
+    el.addEventListener('animationend', function(){ el.remove(); });
+  }
+
+  function spawnConfetti(){
+    var colors = ['#FF8FAC','#5FBFA0','#A784E8','#F3C15F'];
+    var stageArea = $('stageArea');
+    var rect = stageArea.getBoundingClientRect();
+    for(var i=0;i<18;i++){
+      (function(){
+        var el = document.createElement('span');
+        el.className='confetti';
+        el.style.left = (rect.left + rect.width/2 + (Math.random()*160-80))+'px';
+        el.style.top = (rect.top + Math.random()*20)+'px';
+        el.style.background = colors[Math.floor(Math.random()*colors.length)];
+        el.style.animationDelay = (Math.random()*0.3)+'s';
+        document.body.appendChild(el);
+        el.addEventListener('animationend', function(){ el.remove(); });
+      })();
+    }
+  }
+
+  var tickerQueue = [];
+  function pushTicker(msg){
+    tickerQueue.unshift(msg);
+    if(tickerQueue.length>8) tickerQueue.pop();
+    renderTickerTop();
+  }
+  function renderTickerTop(){
+    var el = $('tickerText');
+    if(!tickerQueue.length) return;
+    el.style.opacity = 0;
+    setTimeout(function(){ el.textContent = tickerQueue[0]; el.style.opacity = 1; }, 180);
+  }
+  var tickerRotateIdx = 0;
+  function rotateTicker(){
+    if(tickerQueue.length<2) return;
+    tickerRotateIdx = (tickerRotateIdx+1) % tickerQueue.length;
+    var el = $('tickerText');
+    el.style.opacity = 0;
+    setTimeout(function(){ el.textContent = tickerQueue[tickerRotateIdx]; el.style.opacity = 1; }, 180);
+  }
+
+  function pushComment(text){
+    var list = $('commentList');
+    var el = document.createElement('div');
+    el.className='comment';
+    var av = document.createElement('div');
+    av.className='av'; av.style.background = pick(AVATAR_BG); av.textContent = pick(['🐾','🌙','🍡','🧸','🌸']);
+    var body = document.createElement('div');
+    body.className='body';
+    body.innerHTML = '<span class="user">'+pick(COMMENT_USERS)+'</span>'+text+'<span class="time">たった今</span>';
+    el.appendChild(av); el.appendChild(body);
+    list.insertBefore(el, list.firstChild);
+    while(list.children.length>30){ list.removeChild(list.lastChild); }
+  }
+
+  function updateStageVisuals(){
+    var idx = stageIndexFor(state.lifetimeFans);
+    var card = $('stageCard');
+    card.className = 'stage-card s'+Math.min(idx,6);
+    card.style.filter = state.rebirthCount>0 ? 'hue-rotate('+((state.rebirthCount%8)*22)+'deg)' : '';
+    var pillHtml = 'Stage '+(idx+1)+' <b>'+getStage(idx).name+'</b>';
+    if(state.currentResultId){
+      var baseKey = state.temperament+'_'+(state.resultRare?'rare':'normal');
+      var pname = PALETTES[state.resultPalette].name;
+      pillHtml += '<br><span style="font-size:.68rem">'+(state.resultRare?'⭐':'')+RESULT_NAMES[baseKey]+'・'+pname+'</span>';
+    }
+    $('stageNamePill').innerHTML = pillHtml;
+
+    $('grpShell').style.display = idx===0 ? '' : 'none';
+    $('grpEyesClosed').style.display = idx===0 ? '' : 'none';
+    $('grpEyesOpen').style.display = idx>=1 ? '' : 'none';
+    $('grpEars').style.display = idx>=2 ? 'none' : '';
+    $('grpEarsPoint').style.display = idx>=2 ? '' : 'none';
+    $('grpRibbon').style.display = idx>=2 ? '' : 'none';
+    $('grpSparkle').style.display = idx>=3 ? '' : 'none';
+    $('grpCollar').style.display = idx>=4 ? '' : 'none';
+    $('grpMic').style.display = idx>=5 ? '' : 'none';
+    $('grpStreamers').style.display = idx>=6 ? '' : 'none';
+    $('grpRays').style.display = idx>=7 ? '' : 'none';
+    $('grpCrownSmall').style.display = (idx>=7 && idx<10) ? '' : 'none';
+    $('grpBodyGlitter').style.display = idx>=9 ? '' : 'none';
+    $('grpCrownBig').style.display = idx>=10 ? '' : 'none';
+    $('grpAura').style.display = idx>=10 ? '' : 'none';
+
+    var scale = scaleForStage(idx);
+    $('grpBodyScale').setAttribute('transform', 'translate(100,112) scale('+scale+') translate(-100,-112)');
+    $('grpRealScale').setAttribute('transform', 'translate(100,110) scale('+scale+') translate(-100,-110)');
+    $('stageArea').style.setProperty('--body-color', bodyColorForStage(idx));
+    var rp = roomPaletteForStage(idx);
+    $('stageArea').style.setProperty('--room-wall-l', rp.wallL);
+    $('stageArea').style.setProperty('--room-wall-r', rp.wallR);
+    $('stageArea').style.setProperty('--room-floor', rp.floor);
+    $('stageArea').style.setProperty('--room-window', rp.window);
+
+    var isReal = idx >= REAL_FORM_INDEX;
+    $('grpBodyScale').style.display = isReal ? 'none' : '';
+    $('grpRealScale').style.display = isReal ? '' : 'none';
+
+    if(state.temperament){
+      document.documentElement.style.setProperty('--hair-color', PALETTES[state.resultPalette].hex);
+      var isOyaji = state.temperament==='nonbiri' && state.resultRare;
+      $('grpRealEyesSleepy').style.display = (state.temperament==='nonbiri') ? '' : 'none';
+      $('grpRealEyesNormal').style.display = (state.temperament==='nonbiri') ? 'none' : '';
+      $('grpRealOutfitSuit').style.display = isOyaji ? '' : 'none';
+      $('grpRealOutfitIdol').style.display = isOyaji ? 'none' : '';
+      $('grpRealRareFx').style.display = state.resultRare ? '' : 'none';
+      $('grpRealSnsFx').style.display = (state.temperament==='sns') ? '' : 'none';
+    }
+
+    var cur = getStage(idx).min, next = getStage(idx+1).min;
+    var pct = Math.min(100, Math.max(0, (state.lifetimeFans-cur)/(next-cur)*100));
+    $('progLabel').textContent = 'つぎは「'+getStage(idx+1).name+'」まで';
+    $('progPct').textContent = Math.floor(pct)+'%';
+    $('progFill').style.width = pct+'%';
+
+    if(idx > state.lastStageSeen){
+      state.lastStageSeen = idx;
+      spawnConfetti();
+      sfxStageUp();
+      if(idx===REAL_FORM_INDEX){
+        finalizeResult();
+        spawnConfetti();
+        pushTicker(fillTpl(TICKER_REALFORM, state));
+        var baseKey2 = state.temperament+'_'+(state.resultRare?'rare':'normal');
+        pushComment('……え、雰囲気変わった!? 正体は"'+RESULT_NAMES[baseKey2]+'"だったなんて…！');
+        toast((state.resultRare?'✨レア個体✨ ':'')+'🌟『'+RESULT_NAMES[baseKey2]+'』に覚醒した！');
+        showBubble('覚醒した…！');
+      } else {
+        pushTicker(fillTpl(TICKER_STAGE, state));
+        pushComment(pick(COMMENT_TEXT).replace(/{name}/g, state.name)+'！レベルアップおめでとう');
+        toast('🎉 '+getStage(idx).name+' にランクアップ！');
+        showBubble('やったー!');
+      }
+    }
+  }
+
+  function renderShop(){
+    var list = $('shopList');
+    list.innerHTML = '';
+    var curIdx = stageIndexFor(state.lifetimeFans);
+    UPGRADES.forEach(function(u){
+      var row = document.createElement('div');
+      if(curIdx < u.unlock){
+        row.className = 'shop-item locked-item';
+        row.innerHTML =
+          '<div class="ic">🔒</div>'+
+          '<div class="info"><div class="nm">？？？</div><div class="ds">「'+getStage(u.unlock).name+'」到達で解放</div></div>';
+        list.appendChild(row);
+        return;
+      }
+      var owned = state.upgrades[u.id];
+      var cost = upgradeCost(u, owned);
+      row.className = 'shop-item';
+      row.innerHTML =
+        '<div class="ic">'+u.ic+'</div>'+
+        '<div class="info"><div class="nm">'+u.name+'</div><div class="ds">'+u.desc+'</div><div class="owned">所持: '+owned+'</div></div>'+
+        '<button class="buy-btn" data-id="'+u.id+'" '+(state.hearts<cost?'disabled':'')+'>購入<span class="cost">♡'+formatNum(cost)+'</span></button>';
+      list.appendChild(row);
+    });
+  }
+
+  function buyUpgrade(id){
+    var u = UPGRADES.filter(function(x){return x.id===id;})[0];
+    if(!u) return;
+    if(stageIndexFor(state.lifetimeFans) < u.unlock) return;
+    var owned = state.upgrades[id];
+    var cost = upgradeCost(u, owned);
+    if(state.hearts < cost) return;
+    state.hearts -= cost;
+    state.upgrades[id] = owned+1;
+    sfxBuy();
+    renderShop();
+    updateStats();
+    save();
+  }
+
+  function renderAchievements(){
+    var list = $('achList');
+    list.innerHTML = '';
+    ACHIEVEMENTS.forEach(function(a){
+      var unlocked = !!state.achievements[a.id];
+      var el = document.createElement('div');
+      el.className = 'ach-badge' + (unlocked?'':' locked');
+      el.innerHTML = '<span class="em">'+a.em+'</span>'+a.name;
+      list.appendChild(el);
+    });
+  }
+
+  function checkAchievements(){
+    var changed = false;
+    ACHIEVEMENTS.forEach(function(a){
+      if(!state.achievements[a.id] && a.check(state)){
+        state.achievements[a.id] = true;
+        changed = true;
+        toast('🏆 実績解除: '+a.name);
+        pushComment('『'+a.name+'』達成おめでとう〜！');
+        showBubble('🏆 '+a.name);
+      }
+    });
+    if(changed) renderAchievements();
+  }
+
+  function finalizeResult(){
+    state.temperament = determineTemperament(state);
+    state.resultRare = Math.random() < 0.08;
+    state.resultPalette = Math.floor(Math.random()*PALETTES.length);
+    var key = state.temperament+'_'+(state.resultRare?'rare':'normal')+'_p'+state.resultPalette;
+    state.currentResultId = key;
+    if(!state.dex[key]) state.dex[key] = {count:0, first:Date.now()};
+    state.dex[key].count += 1;
+    renderDex();
+  }
+
+  function renderDex(){
+    var wrap = $('dexGrid');
+    wrap.innerHTML = '';
+    TEMPERAMENTS.forEach(function(t){
+      ['normal','rare'].forEach(function(r){
+        PALETTES.forEach(function(p, pi){
+          var key = t.id+'_'+r+'_p'+pi;
+          var entry = state.dex[key];
+          var el = document.createElement('div');
+          el.className = 'dex-badge' + (entry?'':' locked') + (r==='rare'?' rare':'');
+          if(entry){
+            el.style.setProperty('--dot', p.hex);
+            el.title = RESULT_NAMES[t.id+'_'+r] + '・' + p.name + (entry.count>1 ? '（'+entry.count+'回目）' : '');
+            el.innerHTML = '<span>'+t.em+(r==='rare'?'⭐':'')+'</span><span class="dot"></span>';
+          } else {
+            el.title = '？？？';
+            el.innerHTML = '<span>？</span>';
+          }
+          wrap.appendChild(el);
+        });
+      });
+    });
+  }
+
+  function doRebirth(){
+    if(!state.currentResultId) return;
+    var baseKey = state.temperament+'_'+(state.resultRare?'rare':'normal');
+    var resultName = RESULT_NAMES[baseKey] || '';
+    if(!confirm('「'+resultName+'」として今回の育成は完成しました。転生すると卵ごもりからやり直しになりますが、図鑑の記録は残り、次の世代から毎秒ファン・タップ獲得が恒久的に+5%されます。転生しますか？')) return;
+    state.rebirthCount += 1;
+    state.hearts = 0; state.lifetimeFans = 0; state.totalClicks = 0; state.buzzCount = 0;
+    state.tapEarned = 0; state.idleEarned = 0; state.buzzUntil = 0; state.lastStageSeen = 0;
+    var upg = {}; UPGRADES.forEach(function(u){ upg[u.id] = 0; }); state.upgrades = upg;
+    state.temperament = null; state.currentResultId = null; state.resultRare = null; state.resultPalette = null;
+    save();
+    spawnConfetti();
+    pushTicker('🔄『'+state.name+'』が転生！第'+(state.rebirthCount+1)+'世代として再スタート');
+    pushComment('転生後もまた応援するね…！');
+    toast('🔄 転生完了！卵ごもりから再スタート（永続ボーナス+'+(state.rebirthCount*5)+'%）');
+    updateStats();
+    renderShop();
+    renderAchievements();
+    renderDex();
+  }
+
+  function updateShareLink(){
+    var idx = stageIndexFor(state.lifetimeFans);
+    var text = '『'+state.name+'』が'+getStage(idx).name+'まで成長中🌱';
+    if(state.currentResultId){
+      var baseKey = state.temperament+'_'+(state.resultRare?'rare':'normal');
+      text += '正体は"'+RESULT_NAMES[baseKey]+'"('+PALETTES[state.resultPalette].name+')！';
+    }
+    text += ' 総ファン数'+formatNum(state.lifetimeFans)+'人！ #かどっこアイドル';
+    var url = 'https://twitter.com/intent/tweet?text='+encodeURIComponent(text)+'&url='+encodeURIComponent(SHARE_URL);
+    $('shareLink').href = url;
+    $('shareIconBtn').href = url;
+  }
+
+  function updateStats(){
+    $('heartsVal').textContent = formatNum(state.hearts);
+    $('fpsVal').textContent = formatNum(computeFps()) + (isBuzzing()?' ×2':'');
+    $('lifetimeVal').textContent = formatNum(state.lifetimeFans);
+    updateStageVisuals();
+    updateShareLink();
+    $('rebirthRow').hidden = !state.currentResultId;
+    if(state.currentResultId){
+      $('rebirthNote').textContent = '現在の永続ボーナス: +'+(state.rebirthCount*5)+'%（転生'+state.rebirthCount+'回）';
+    }
+  }
+
+  function cheer(x, y){
+    var amt = computePerClick() * (isBuzzing()?2:1);
+    state.hearts += amt;
+    state.lifetimeFans += amt;
+    state.totalClicks += 1;
+    state.tapEarned += amt;
+    if(x!==undefined) spawnHeartParticle(x,y);
+    sfxPop();
+    if(Math.random() < 0.3) showBubble(pick(BUBBLE_TAP));
+    ['grpArmL','grpArmR'].forEach(function(id){
+      var el = $(id);
+      el.classList.remove('arm-wiggle'); void el.offsetWidth; el.classList.add('arm-wiggle');
+    });
+    updateStats();
+    renderShop();
+    checkAchievements();
+  }
+
+  function tick(){
+    var fps = computeFps() * (isBuzzing()?2:1);
+    if(fps>0){
+      state.hearts += fps;
+      state.lifetimeFans += fps;
+      state.idleEarned += fps;
+    }
+    state.playSeconds += 1;
+
+    if(state.upgrades.snsPost>0 && !isBuzzing()){
+      var chance = Math.min(0.02*state.upgrades.snsPost, 0.15);
+      if(Math.random() < chance){
+        state.buzzUntil = Date.now() + 30000;
+        state.buzzCount += 1;
+        sfxBuzz();
+        pushTicker(fillTpl(pick(TICKER_BUZZ), state));
+        pushComment('えっなにこれバズってる…！');
+        toast('🔥 バズり中！しばらく獲得量が2倍！');
+        showBubble('バズってきた!!');
+      }
+    }
+
+    if(Math.random() < 0.18){
+      pushTicker(fillTpl(pick(TICKER_TEMPLATES), state));
+    }
+    if(Math.random() < 0.08){
+      pushComment(fillTpl(pick(COMMENT_TEXT), state));
+    }
+    if(Math.random() < 0.15){
+      var pool = (state.temperament && BUBBLE_IDLE_BY_TEMPERAMENT[state.temperament]) || BUBBLE_IDLE;
+      showBubble(pick(pool));
+    }
+
+    updateStats();
+    renderShop();
+    checkAchievements();
+    save();
+  }
+
+  function applyOfflineGain(){
+    var now = Date.now();
+    var elapsedSec = Math.floor((now - (state.lastSeen||now)) / 1000);
+    state.lastSeen = now;
+    var fps = computeFps();
+    if(elapsedSec > 30 && fps > 0){
+      var capped = Math.min(elapsedSec, 8*3600);
+      var gain = Math.floor(capped * fps);
+      if(gain > 0){
+        var hrs = Math.floor(capped/3600), mins = Math.floor((capped%3600)/60);
+        var timeStr = hrs>0 ? hrs+'時間'+mins+'分' : mins+'分';
+        $('offlineText').textContent = timeStr+'のあいだに、♡が'+formatNum(gain)+'貯まったよ！';
+        $('offlineOverlay').hidden = false;
+        $('offlineClaimBtn').onclick = function(){
+          state.hearts += gain;
+          state.lifetimeFans += gain;
+          $('offlineOverlay').hidden = true;
+          updateStats(); renderShop(); checkAchievements(); save();
+        };
+      }
+    }
+  }
+
+  function wireEvents(){
+    $('stageArea').addEventListener('pointerdown', function(e){
+      cheer(e.clientX, e.clientY);
+    });
+    $('cheerBtn').addEventListener('click', function(e){
+      var r = $('stageArea').getBoundingClientRect();
+      cheer(r.left+r.width/2, r.top+r.height/2);
+    });
+    $('shopList').addEventListener('click', function(e){
+      var btn = e.target.closest('.buy-btn');
+      if(btn && !btn.disabled) buyUpgrade(btn.getAttribute('data-id'));
+    });
+    document.querySelectorAll('.swatch').forEach(function(sw){
+      sw.addEventListener('click', function(){
+        document.querySelectorAll('.swatch').forEach(function(s){s.classList.remove('active');});
+        sw.classList.add('active');
+        var color = sw.getAttribute('data-color');
+        state.ribbonColor = color;
+        document.documentElement.style.setProperty('--ribbon-color', color);
+        save();
+      });
+    });
+    $('muteBtn').addEventListener('click', function(){
+      state.muted = !state.muted;
+      $('muteBtn').textContent = state.muted ? '🔇' : '🔊';
+      save();
+    });
+    $('rebirthBtn').addEventListener('click', doRebirth);
+    $('resetLink').addEventListener('click', function(){
+      if(confirm('本当にはじめからやり直しますか？これまでの育成データは消えます。')){
+        try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
+        state = defaultState();
+        save();
+        location.reload();
+      }
+    });
+    $('nameStartBtn').addEventListener('click', function(){
+      var v = $('nameInput').value.trim();
+      state.name = v || 'もこ';
+      $('nameOverlay').hidden = true;
+      pushTicker(fillTpl('『{name}』が誕生！これから応援していこう', state));
+      save();
+    });
+  }
+
+  function start(){
+    state = loadState() || defaultState();
+    var isNew = !state.name;
+
+    document.documentElement.style.setProperty('--ribbon-color', state.ribbonColor || '#FF8FAC');
+    $('muteBtn').textContent = state.muted ? '🔇' : '🔊';
+    document.querySelectorAll('.swatch').forEach(function(sw){
+      sw.classList.toggle('active', sw.getAttribute('data-color')===state.ribbonColor);
+    });
+
+    wireEvents();
+    renderShop();
+    renderAchievements();
+    renderDex();
+    updateStats();
+
+    if(isNew){
+      $('nameOverlay').hidden = false;
+    } else {
+      applyOfflineGain();
+      pushTicker(fillTpl(pick(TICKER_TEMPLATES), state));
+      pushComment(fillTpl(pick(COMMENT_TEXT), state));
+    }
+
+    setInterval(tick, 1000);
+    setInterval(rotateTicker, 4000);
+  }
+
+  start();
+})();
+</script>
+</body>
+</html>
