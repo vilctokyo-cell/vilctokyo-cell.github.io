@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-05H87J02NQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-05H87J02NQ');
+</script>
+<title>ズルズル+ 解約センター | VILC</title>
+<meta name="description" content="サブスクの解約を全力で妨害してくるダークパターンだらけのブラウザゲーム。VILC発のくだらない実験企画です。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VILC">
+<meta property="og:title" content="ズルズル+ 解約センター">
+<meta property="og:description" content="サブスクの解約を全力で妨害してくるダークパターンだらけのブラウザゲーム">
+<meta property="og:url" content="https://www.vilc.tokyo/cancel-hell/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ズルズル+ 解約センター">
+<meta name="twitter:description" content="サブスクの解約を全力で妨害してくるダークパターンだらけのブラウザゲーム">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&family=Manrope:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{
+  --bg:#0b0d12;
+  --surface:#14171f;
+  --surface-alt:#1b1f29;
+  --line:#262b36;
+  --text:#eef0f4;
+  --muted:#8b8fa3;
+  --accent:#5b8cff;
+  --accent-dim:#2c3f75;
+  --danger:#ff5c8a;
+  --danger-dim:#4a2233;
+  --success:#35d399;
+  --warn:#ffcf5c;
+}
+*{box-sizing:border-box;}
+[hidden]{display:none!important;}
+html,body{margin:0;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Manrope',system-ui,sans-serif;
+  padding-block:2.5rem;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;
+  justify-content:center;
+}
+h1,h2,h3{font-family:'Sora',system-ui,sans-serif;margin:0;text-wrap:balance;}
+.mono{font-family:'JetBrains Mono',monospace;}
+button{font-family:'Manrope',system-ui,sans-serif;cursor:pointer;border:none;}
+#frame{
+  width:100%;
+  max-width:440px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  position:relative;
+  min-height:560px;
+  display:flex;
+  flex-direction:column;
+}
+.chrome{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  background:var(--surface-alt);
+  border-bottom:1px solid var(--line);
+  font-size:12px;
+  color:var(--muted);
+}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--line);}
+.dot.r{background:#ff6159;}
+.dot.y{background:#ffbd2e;}
+.dot.g{background:#28c840;}
+.url{
+  margin-left:6px;
+  background:var(--bg);
+  border-radius:6px;
+  padding:3px 10px;
+  flex:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#hud{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:8px 16px;
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+  font-size:12px;
+  color:var(--muted);
+}
+#timer{font-family:'JetBrains Mono',monospace;color:var(--warn);}
+#screen{
+  flex:1;
+  padding:28px 22px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  position:relative;
+}
+.eyebrow{font-size:12px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;}
+p{margin:0;line-height:1.6;font-size:14px;color:var(--muted);}
+.card{
+  background:var(--surface-alt);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:16px;
+}
+input[type=password],input[type=text]{
+  width:100%;
+  height:40px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:var(--bg);
+  color:var(--text);
+  padding:0 12px;
+  font-size:14px;
+  font-family:'JetBrains Mono',monospace;
+}
+input:focus{outline:2px solid var(--accent);outline-offset:1px;}
+.err{color:var(--danger);font-size:12px;min-height:14px;}
+.btn{
+  height:44px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:700;
+  padding:0 18px;
+}
+.btn-primary{background:var(--accent);color:#08101f;}
+.btn-primary:hover{background:#7aa1ff;}
+.btn-outline{background:transparent;border:1px solid var(--line);color:var(--text);}
+.btn-outline:hover{border-color:var(--accent);}
+.btn-danger-outline{background:transparent;border:1px solid var(--danger);color:var(--danger);}
+.btn-danger-outline:hover{background:var(--danger-dim);}
+.code-display{
+  font-family:'JetBrains Mono',monospace;
+  font-size:34px;
+  letter-spacing:.12em;
+  color:var(--success);
+  text-align:center;
+  padding:14px 0;
+  transition:filter .5s;
+}
+.code-display.hidden{filter:blur(9px);}
+.ring{
+  width:96px;height:96px;border-radius:50%;
+  border:6px solid var(--line);
+  border-top-color:var(--accent);
+  margin:6px auto;
+  animation:spin 1.4s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.hold-btn{
+  width:100%;height:120px;border-radius:12px;
+  background:var(--surface-alt);
+  border:1px solid var(--line);
+  color:var(--text);
+  font-family:'Sora',sans-serif;font-weight:500;font-size:15px;
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  user-select:none;
+}
+.hold-fill{
+  position:absolute;left:0;top:0;bottom:0;width:0%;
+  background:var(--accent-dim);
+  transition:width .05s linear;
+}
+.hold-label{position:relative;z-index:1;}
+.chat-log{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto;}
+.bubble{
+  max-width:82%;
+  padding:9px 12px;
+  border-radius:10px;
+  font-size:13px;
+  line-height:1.5;
+}
+.bubble.bot{background:var(--surface-alt);border:1px solid var(--line);align-self:flex-start;}
+.bubble.user{background:var(--accent-dim);color:#cfe0ff;align-self:flex-end;}
+.quick-replies{display:flex;flex-wrap:wrap;gap:8px;}
+.qr{
+  border:1px solid var(--line);background:var(--surface-alt);color:var(--text);
+  border-radius:20px;padding:8px 14px;font-size:12.5px;
+}
+.qr.big{background:var(--accent);color:#08101f;font-weight:700;border-color:var(--accent);}
+.qr.tiny{font-size:11px;color:var(--muted);background:transparent;border:none;text-decoration:underline;padding:4px 6px;}
+.popup-wrap{position:absolute;inset:0;background:rgba(4,5,8,.72);display:flex;align-items:center;justify-content:center;padding:18px;}
+.popup{
+  width:100%;max-width:320px;background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;
+  position:relative;
+}
+.wallpaper-frame{
+  background:var(--bg);border:1px solid var(--line);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;padding:8px;
+}
+.popup-actions{display:flex;flex-direction:column;gap:10px;position:relative;}
+.no-thanks{
+  align-self:flex-end;background:transparent;border:none;color:var(--muted);
+  font-size:11px;text-decoration:underline;padding:6px;position:relative;
+}
+.link-list{display:flex;flex-direction:column;gap:2px;}
+.link-row{
+  padding:12px 4px;border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:13.5px;color:var(--text);background:transparent;text-align:left;width:100%;
+}
+.link-row.decoy{color:var(--text);}
+.link-row.real{color:var(--muted);font-size:10.5px;justify-content:center;}
+.toast{
+  position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+  background:var(--surface-alt);border:1px solid var(--danger);color:var(--danger);
+  padding:8px 14px;border-radius:20px;font-size:12px;opacity:0;transition:opacity .2s;
+}
+.toast.show{opacity:1;}
+.giveup-tab{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:26px;height:84px;
+  background:var(--surface-alt);border:1px solid var(--line);border-left:none;
+  border-radius:0 8px 8px 0;
+  color:var(--muted);font-size:10.5px;letter-spacing:.05em;
+  display:flex;align-items:center;justify-content:center;
+  writing-mode:vertical-rl;text-orientation:mixed;
+  opacity:.55;z-index:20;padding:0;
+}
+.giveup-tab:hover{opacity:1;color:var(--danger);border-color:var(--danger);}
+.progress-track{height:8px;background:var(--surface-alt);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--accent);border-radius:4px;width:0%;transition:width 1.1s cubic-bezier(.2,.8,.2,1);}
+.opt-in{
+  display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:var(--muted);
+  padding:8px 2px;
+}
+.opt-in input{margin-top:2px;accent-color:var(--accent);}
+.color-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.color-chip{
+  height:64px;border-radius:10px;font-size:13.5px;font-weight:700;color:#08101f;
+  padding:0 10px;text-align:center;line-height:1.3;
+  display:flex;align-items:center;justify-content:center;
+}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.stat{background:var(--surface-alt);border-radius:10px;padding:12px;text-align:center;}
+.stat b{display:block;font-family:'JetBrains Mono',monospace;font-size:20px;color:var(--warn);}
+.stat span{font-size:11px;color:var(--muted);}
+.share-block{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+.share-btn{
+  height:44px;border-radius:8px;font-size:14px;font-weight:700;
+  background:#fff;color:#0b0d12;display:flex;align-items:center;justify-content:center;gap:8px;
+  text-decoration:none;
+}
+.share-btn:hover{background:#e6e6e6;}
+.vilc-banner{
+  display:flex;align-items:center;gap:12px;
+  background:var(--surface-alt);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;text-decoration:none;color:var(--text);
+}
+.vilc-banner:hover{border-color:var(--accent);}
+.vilc-badge{
+  flex:none;width:40px;height:40px;border-radius:8px;background:var(--accent);
+  color:#08101f;font-family:'Sora',sans-serif;font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.vilc-copy{display:flex;flex-direction:column;gap:2px;}
+.vilc-copy b{font-size:13px;font-weight:700;}
+.vilc-copy span{font-size:11.5px;color:var(--muted);}
+@media (max-width:420px){
+  #frame{min-height:520px;}
+  #screen{padding:22px 16px;}
+}
+</style>
+</head>
+<body>
+<div id="frame">
+  <div class="chrome">
+    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+    <div class="url" id="urlbar">streamloop.example/account</div>
+  </div>
+  <div id="hud" hidden>
+    <span id="stepLabel">ステップ 1/7</span>
+    <span id="timer">00:00</span>
+  </div>
+  <div id="screen"></div>
+  <button class="giveup-tab" id="giveupTab" hidden>諦める</button>
+</div>
+<script>
+(function(){
+  var screen = document.getElementById('screen');
+  var hud = document.getElementById('hud');
+  var stepLabel = document.getElementById('stepLabel');
+  var timerEl = document.getElementById('timer');
+  var urlbar = document.getElementById('urlbar');
+  var giveupTab = document.getElementById('giveupTab');
+
+  var STAGES = ['login','sms','auth','face','chat','popup','maze','processing','pause','colortrap','survey','phrase'];
+  var STAGE_NAMES = {
+    login:'再ログイン', sms:'SMS認証', auth:'アプリ認証', face:'本人確認',
+    chat:'チャットボット', popup:'引き止め対応', maze:'解約リンク探し',
+    processing:'処理中', pause:'一時停止の提案', colortrap:'色の罠',
+    survey:'退会理由アンケート', phrase:'最終確認'
+  };
+
+  var state = {
+    stage: 'dashboard',
+    startTime: null,
+    timerHandle: null,
+    retentionSurvived: 0,
+    chatLoops: 0,
+    colorMistakes: 0,
+    serverStalls: 0,
+    emailOptIn: true,
+    phraseTimedOut: false,
+    popupIndex: 0,
+    gaveUpFrom: null
+  };
+
+  var VILC_URL = 'https://www.vilc.tokyo';
+  var GAME_URL = 'https://www.vilc.tokyo/cancel-hell/';
+
+  function shareBlockHtml(tweetText){
+    var tweetUrl = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(tweetText) + '&url=' + encodeURIComponent(GAME_URL) + '&hashtags=VILC';
+    return '<div class="share-block">' +
+      '<a class="share-btn" href="'+tweetUrl+'" target="_blank" rel="noopener">Xでシェアする</a>' +
+      '<a class="vilc-banner" href="'+VILC_URL+'" target="_blank" rel="noopener">' +
+        '<div class="vilc-badge">VILC</div>' +
+        '<div class="vilc-copy"><b>VILC</b><span>こういうくだらないものを作っています</span></div>' +
+      '</a>' +
+    '</div>';
+  }
+
+  function shuffle(arr){
+    for(var i=arr.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t = arr[i]; arr[i]=arr[j]; arr[j]=t;
+    }
+    return arr;
+  }
+
+  giveupTab.onclick = function(){
+    state.gaveUpFrom = state.stage;
+    stopTimer();
+    goto('gaveup');
+  };
+
+  function fmtTime(ms){
+    var s = Math.floor(ms/1000);
+    var m = Math.floor(s/60);
+    s = s % 60;
+    return (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  }
+
+  function startTimer(){
+    state.startTime = Date.now();
+    state.timerHandle = setInterval(function(){
+      timerEl.textContent = fmtTime(Date.now() - state.startTime);
+    }, 250);
+  }
+  function stopTimer(){
+    clearInterval(state.timerHandle);
+  }
+
+  function setHud(stage){
+    var idx = STAGES.indexOf(stage);
+    if(idx >= 0){
+      stepLabel.textContent = 'ステップ ' + (idx+1) + '/' + STAGES.length;
+      urlbar.textContent = 'streamloop.example/account/'+stage;
+    }
+  }
+
+  function goto(stage){
+    state.stage = stage;
+    setHud(stage);
+    var showChrome = (stage !== 'dashboard' && stage !== 'done' && stage !== 'gaveup');
+    hud.hidden = !showChrome;
+    giveupTab.hidden = !showChrome;
+    render();
+  }
+
+  function render(){
+    screen.innerHTML = '';
+    var fn = renderers[state.stage];
+    if(fn) fn();
+  }
+
+  var renderers = {};
+
+  renderers.dashboard = function(){
+    urlbar.textContent = 'streamloop.example/account';
+    screen.innerHTML =
+      '<div class="eyebrow">マイページ</div>' +
+      '<h2>ズルズル+</h2>' +
+      '<div class="card">' +
+        '<p style="color:var(--text);font-weight:500;margin-bottom:6px;">ご契約中のプラン</p>' +
+        '<h3 style="margin-bottom:2px;">プレミアムプラン</h3>' +
+        '<p class="mono" style="color:var(--warn);">¥1,480 / 月</p>' +
+      '</div>' +
+      '<p>次回更新日: 毎月23日。更新前でも解約手続きは可能です。</p>' +
+      '<button class="btn btn-danger-outline" id="cancelBtn">解約する</button>' +
+      '<p style="font-size:11px;">※ 解約手続きには本人確認が必要です。所要時間は状況により異なります。</p>';
+    document.getElementById('cancelBtn').onclick = function(){
+      startTimer();
+      goto('login');
+    };
+  };
+
+  renderers.login = function(){
+    screen.innerHTML =
+      '<div class="eyebrow">'+STAGE_NAMES.login+'</div>' +
+      '<h2>本当にあなたですか?</h2>' +
+      '<p>解約手続きを行う前に、もう一度ログインしてご本人であることを確認してください。</p>' +
+      '<div class="card">' +
+        '<label class="mono" style="font-size:11px;color:var(--muted);">パスワード</label>' +
+        '<input type="password" id="pw" placeholder="なんでも構いません" style="margin-top:6px;">' +
+        '<div class="err" id="pwErr"></div>' +
+      '</div>' +
+      '<button class="btn btn-primary" id="loginNext">次へ</button>';
+    document.getElementById('loginNext').onclick = function(){
+      var v = document.getElementById('pw').value;
+      if(!v){
+        document.getElementById('pwErr').textContent = 'パスワードを入力してください(内容は見ていません)';
+        return;
+      }
+      goto('sms');
+    };
+  };
+
+  renderers.sms = function(){
+    var code = String(Math.floor(100000 + Math.random()*900000));
+    screen.innerHTML =
+      '<div class="eyebrow">'+STAGE_NAMES.sms+'</div>' +
+      '<h2>認証コードを送信しました</h2>' +
+      '<p>下のコードをよくご確認のうえ、入力してください。表示時間は短めです。</p>' +
+      '<div class="card">' +
+        '<div class="code-display" id="codeDisplay">'+code+'</div>' +
+      '</div>' +
+      '<input type="text" id="codeInput" placeholder="コードを入力" class="mono">' +
+      '<div class="err" id="smsErr"></div>' +
+      '<button class="btn btn-primary" id="smsNext">確認</button>';
+    setTimeout(function(){
+      var d = document.getElementById('codeDisplay');
+      if(d){ d.classList.add('hidden'); }
+    }, 1200);
+    document.getElementById('smsNext').onclick = function(){
+      var v = document.getElementById('codeInput').value;
+      if(!v){
+        document.getElementById('smsErr').textContent = 'コードを入力してください';
+        return;
+      }
+      var btn = document.getElementById('smsNext');
+      btn.textContent = '検証中…';
+      btn.disabled = true;
+      setTimeout(function(){
+        goto('auth');
+      }, 900);
+    };
+  };
+
+  renderers.auth = function(){
+    screen.innerHTML =
+      '<div class="eyebrow">'+STAGE_NAMES.auth+'</div>' +
+      '<h2>認証アプリで承認してください</h2>' +
+      '<p>お使いの認証アプリに通知を送信しました。アプリ側で承認すると、こちらのボタンが有効になります。</p>' +
+      '<div class="ring"></div>' +
+      '<button class="btn btn-primary" id="authNext" disabled style="opacity:.4;">承認を待っています…</button>';
+    setTimeout(function(){
+      var b = document.getElementById('authNext');
+      if(!b) return;
+      b.disabled = false;
+      b.style.opacity = 1;
+      b.textContent = '承認されました。次へ';
+      b.onclick = function(){ goto('face'); };
+    }, 2200);
+  };
+
+  renderers.face = function(){
+    screen.innerHTML =
+      '<div class="eyebrow">'+STAGE_NAMES.face+'</div>' +
+      '<h2>本人確認中です</h2>' +
+      '<p>ボタンを押したまま、動かさずにお待ちください。手を離すとやり直しになります。</p>' +
+      '<button class="hold-btn" id="holdBtn">' +
+        '<div class="hold-fill" id="holdFill"></div>' +
+        '<span class="hold-label" id="holdLabel">押して確認中…</span>' +
+      '</button>' +
+      '<div class="err" id="holdErr"></div>';
+    var progress = 0, timer = null, holding = false;
+    var fill = document.getElementById('holdFill');
+    var err = document.getElementById('holdErr');
+    var NEEDED = 2200;
+    function tick(){
+      progress += 40;
+      fill.style.width = Math.min(100, progress/NEEDED*100) + '%';
+      if(progress >= NEEDED){
+        clearInterval(timer);
+        goto('chat');
+      }
+    }
+    function start(){
+      holding = true;
+      err.textContent = '';
+      timer = setInterval(tick, 40);
+    }
+    function cancel(){
+      if(!holding) return;
+      holding = false;
+      clearInterval(timer);
+      if(progress < NEEDED){
+        progress = 0;
+        fill.style.width = '0%';
+        err.textContent = '動きましたね?もう一度お願いします。';
+      }
+    }
+    var btn = document.getElementById('holdBtn');
+    btn.addEventListener('mousedown', start);
+    btn.addEventListener('touchstart', start);
+    btn.addEventListener('mouseup', cancel);
+    btn.addEventListener('mouseleave', cancel);
+    btn.addEventListener('touchend', cancel);
+  };
+
+  var CHAT_ROUNDS = [
+    {bot:'解約についてですね。その前に、こちらはご存知でしたか?今月から新機能「倍速お辞儀再生」が追加されました。', tiny:'それでも解約したい'},
+    {bot:'なるほど…。1か月だけ料金を半額にする特別プランはいかがでしょうか?', tiny:'結構です、解約したい'}
+  ];
+
+  renderers.chat = function(){
+    state.chatRound = 0;
+    screen.innerHTML =
+      '<div class="eyebrow">'+STAGE_NAMES.chat+'</div>' +
+      '<h2>チャットサポート</h2>' +
+      '<div class="chat-log" id="chatLog">' +
+        '<div class="bubble bot">こんにちは。ご用件を教えてください。</div>' +
+      '</div>' +
+      '<div class="quick-replies" id="chatReplies">' +
+        '<button class="qr" data-v="料金について">料金について</button>' +
+        '<button class="qr" data-v="解約したい">解約したい</button>' +
+        '<button class="qr" data-v="パスワードを忘れた">パスワードを忘れた</button>' +
+      '</div>';
+    bindChatReplies();
+  };
+
+  function bindChatReplies(){
+    var els = document.querySelectorAll('#chatReplies .qr, #chatReplies .tiny');
+    els.forEach(function(b){
+      b.onclick = function(){ handleChatClick(b.dataset.v, b); };
+    });
+  }
+
+  function addBubble(text, who){
+    var log = document.getElementById('chatLog');
+    var d = document.createElement('div');
+    d.className = 'bubble ' + who;
+    d.textContent = text;
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function handleChatClick(v, btn){
+    addBubble(v, 'user');
+    var replies = document.getElementById('chatReplies');
+    if(v === '料金について' || v === 'パスワードを忘れた'){
+      setTimeout(function(){
+        addBubble('恐れ入りますが、まずは解約についてご案内が必要です。', 'bot');
+      }, 300);
+      return;
+    }
+    if(v === '解約したい' || v.indexOf('解約したい') >= 0){
+      var round = CHAT_ROUNDS[state.chatRound];
+      if(round){
+        setTimeout(function(){
+          addBubble(round.bot, 'bot');
+          replies.innerHTML =
+            '<button class="qr big" data-v="続ける">続ける(オススメ)</button>' +
+            '<button class="qr tiny" data-v="'+round.tiny+'">'+round.tiny+'</button>';
+          bindChatReplies();
+        }, 350);
+        state.chatRound++;
+        state.chatLoops++;
+        return;
+      } else {
+        setTimeout(function(){
+          addBubble('担当者におつなぎします。少々お待ちください。', 'bot');
+          setTimeout(function(){ goto('popup'); }, 700);
+        }, 350);
+        return;
+      }
+    }
+    if(v === '続ける'){
+      setTimeout(function(){
+        addBubble('ありがとうございます!このままお楽しみください。', 'bot');
+        replies.innerHTML = '<button class="qr" data-v="やっぱり解約したい">やっぱり解約したい</button>';
+        bindChatReplies();
+      }, 300);
+    }
+  }
+
+  function makeWallpaper(seed){
+    var r = function(){ seed = (seed*9301+49297)%233280; return seed/233280; };
+    var eyeDX = 8 + r()*14;
+    var eyeDY = -6 + r()*16;
+    var eyeSizeL = 5 + r()*6;
+    var eyeSizeR = 5 + r()*6;
+    var mouthCurve = -10 + r()*40;
+    var hue = Math.floor(r()*360);
+    var skin = 'hsl('+hue+',30%,72%)';
+    var cheek = 'hsl('+hue+',50%,60%)';
+    var extraArm = r() > 0.5;
+    return '<svg width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="AIが生成した不自然な壁紙">' +
+      '<circle cx="70" cy="72" r="46" fill="'+skin+'"/>' +
+      (extraArm ? '<ellipse cx="118" cy="90" rx="10" ry="22" fill="'+skin+'"/>' : '') +
+      '<circle cx="'+(58-eyeDX/2)+'" cy="'+(62+eyeDY/2)+'" r="'+eyeSizeL+'" fill="#26221f"/>' +
+      '<circle cx="'+(58+eyeDX*1.4)+'" cy="'+(62-eyeDY/2)+'" r="'+eyeSizeR+'" fill="#26221f"/>' +
+      '<circle cx="46" cy="86" r="8" fill="'+cheek+'" opacity=".55"/>' +
+      '<circle cx="96" cy="90" r="9" fill="'+cheek+'" opacity=".55"/>' +
+      '<path d="M50 96 Q70 '+(96+mouthCurve)+' 92 94" stroke="#26221f" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+      '</svg>';
+  }
+
+  renderers.popup = function(){
+    var noThanksTop = 10 + Math.floor(Math.random()*40);
+    var noThanksLeft = Math.floor(Math.random()*70);
+    screen.innerHTML =
+      '<div class="eyebrow">'+STAGE_NAMES.popup+'</div>' +
+      '<h2>引き止められています</h2>' +
+      '<div class="popup-wrap">' +
+        '<div class="popup">' +
+          '<h3>ちょっと待ってください</h3>' +
+          '<p>あなた専用にAIが生成した壁紙をご用意しました。解約する前にご覧ください。</p>' +
+          '<div class="wallpaper-frame">'+makeWallpaper(Date.now())+'</div>' +
+          '<div class="popup-actions">' +
+            '<button class="btn btn-primary" id="keepBtn">保存する</button>' +
+            '<button class="no-thanks" id="noBtn" style="margin-top:'+noThanksTop+'px;margin-left:'+noThanksLeft+'px;">いいえ、結構です</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    document.getElementById('keepBtn').onclick = function(){
+      var btn = document.getElementById('keepBtn');
+      btn.textContent = '保存しました(たぶん)';
+      btn.disabled = true;
+      setTimeout(function(){ goto('maze'); }, 700);
+    };
+    document.getElementById('noBtn').onclick = function(){
+      state.retentionSurvived++;
+      goto('maze');
+    };
+  };
+
+  var MAZE_LINKS = ['プラン変更','支払い方法の確認','通知設定','よくある質問','家族へのプレゼント設定'];
+
+  renderers.maze = function(){
+    var order = MAZE_LINKS.slice();
+    var realPos = Math.floor(Math.random()*3) + 1;
+    var html = '<div class="eyebrow">'+STAGE_NAMES.maze+'</div>' +
+      '<h2>設定</h2>' +
+      '<p>解約はこのページのどこかから行えます。</p>' +
+      '<div class="link-list" id="linkList">';
+    var count = 0;
+    order.forEach(function(t){
+      html += '<button class="link-row decoy" data-real="0">'+t+'<span>›</span></button>';
+      count++;
+      if(count === realPos){
+        html += '<button class="link-row real" data-real="1">解約はこちら</button>';
+      }
+    });
+    html += '</div><div class="toast" id="toast">それは解約リンクではありません</div>';
+    screen.innerHTML = html;
+    var toast = document.getElementById('toast');
+    document.querySelectorAll('#linkList .link-row').forEach(function(b){
+      b.onclick = function(){
+        if(b.dataset.real === '1'){
+          goto('processing');
+        } else {
+          toast.classList.add('show');
+          setTimeout(function(){ toast.classList.remove('show'); }, 1200);
+        }
+      };
+    });
+  };
+
+  var STALL_MESSAGES = [
+    'サーバーが混み合っています。少し時間をおいてから再度お試しください。',
+    '通信が不安定なようです。もう一度お試しください。'
+  ];
+
+  renderers.processing = function(){
+    state.processingAttempt = 0;
+    runProcessing();
+  };
+
+  function runProcessing(){
+    var attempt = state.processingAttempt;
+    screen.innerHTML =
+      '<div class="eyebrow">'+STAGE_NAMES.processing+'</div>' +
+      '<h2>解約処理を行っています</h2>' +
+      '<p>そのままお待ちください。ページを閉じないでください。</p>' +
+      '<div class="progress-track"><div class="progress-fill" id="pFill"></div></div>' +
+      '<div class="err" id="pMsg"></div>';
+    var target = attempt < 2 ? (90 + attempt*6) : 100;
+    requestAnimationFrame(function(){
+      var f = document.getElementById('pFill');
+      if(f) f.style.width = target + '%';
+    });
+    setTimeout(function(){
+      if(state.stage !== 'processing') return;
+      if(attempt < 2){
+        state.serverStalls++;
+        document.getElementById('pMsg').textContent = STALL_MESSAGES[attempt % STALL_MESSAGES.length];
+        var retryBtn = document.createElement('button');
+        retryBtn.className = 'btn btn-primary';
+        retryBtn.textContent = 'もう一度試す';
+        retryBtn.onclick = function(){
+          state.processingAttempt = attempt + 1;
+          runProcessing();
+        };
+        screen.appendChild(retryBtn);
+      } else {
+        goto('pause');
+      }
+    }, 1100);
+  }
+
+  renderers.pause = function(){
+    screen.innerHTML =
+      '<div class="eyebrow">'+STAGE_NAMES.pause+'</div>' +
+      '<h2>解約の前に一時停止はいかがですか</h2>' +
+      '<p>今解約すると、視聴履歴やマイリストがすべて削除されます。一時停止なら、いつでもすぐに再開できます。</p>' +
+      '<button class="btn btn-primary" id="pauseBig">一時停止する(オススメ)</button>' +
+      '<button class="no-thanks" id="pauseSmall" style="align-self:flex-start;">完全に解約する</button>';
+    document.getElementById('pauseBig').onclick = function(){
+      screen.innerHTML =
+        '<div class="eyebrow">'+STAGE_NAMES.pause+'</div>' +
+        '<h2>一時停止プランのご案内</h2>' +
+        '<p>一時停止プランは、通常価格の90%でご利用いただけます。データは保持されますが、課金は止まりません。</p>' +
+        '<button class="no-thanks" id="pauseRetry" style="align-self:flex-start;">やっぱり完全に解約する</button>';
+      document.getElementById('pauseRetry').onclick = function(){
+        state.retentionSurvived++;
+        goto('colortrap');
+      };
+    };
+    document.getElementById('pauseSmall').onclick = function(){
+      state.retentionSurvived++;
+      goto('colortrap');
+    };
+  };
+
+  var COLOR_OPTIONS = ['解約する','このまま続ける','一時停止する','後で決める'];
+  var COLOR_PALETTE = ['var(--danger)','var(--success)','var(--accent)','var(--warn)'];
+
+  renderers.colortrap = function(){
+    renderColorTrap();
+  };
+
+  function renderColorTrap(errMsg){
+    var colors = shuffle(COLOR_PALETTE.slice());
+    screen.innerHTML =
+      '<div class="eyebrow">'+STAGE_NAMES.colortrap+'</div>' +
+      '<h2>どれが解約ですか?</h2>' +
+      '<p>色ではなく、書かれている言葉で選んでください。色は毎回変わります。</p>' +
+      '<div class="color-grid" id="colorGrid">' +
+        COLOR_OPTIONS.map(function(label, i){
+          return '<button class="color-chip" data-v="'+label+'" style="background:'+colors[i]+';">'+label+'</button>';
+        }).join('') +
+      '</div>' +
+      '<div class="err" id="colorErr">'+(errMsg||'')+'</div>';
+    document.querySelectorAll('#colorGrid .color-chip').forEach(function(b){
+      b.onclick = function(){
+        if(b.dataset.v === '解約する'){
+          goto('survey');
+        } else {
+          state.colorMistakes++;
+          renderColorTrap('色に釣られましたね。もう一度、言葉をよく読んでください。');
+        }
+      };
+    });
+  }
+
+  var SURVEY_REASONS = [
+    {v:'高すぎる', reply:'そうですか…もし料金がネックなら、50%オフクーポンをご用意できますが。'},
+    {v:'使っていない', reply:'もったいないですね。通知の頻度を増やして、使い忘れを防ぐこともできますが。'},
+    {v:'他のサービスに移る', reply:'そうでしたか。もう一度当サービスの魅力をご紹介するお時間をいただけますか。'},
+    {v:'その他', reply:'差し支えなければ詳しくお聞きしたいところですが、今回は先に進めますね。'}
+  ];
+
+  renderers.survey = function(){
+    screen.innerHTML =
+      '<div class="eyebrow">'+STAGE_NAMES.survey+'</div>' +
+      '<h2>差し支えなければ理由を教えてください</h2>' +
+      '<p>今後の改善のため、退会理由をお聞かせください。</p>' +
+      '<div class="quick-replies" id="surveyReplies">' +
+        SURVEY_REASONS.map(function(r){ return '<button class="qr" data-v="'+r.v+'">'+r.v+'</button>'; }).join('') +
+      '</div>' +
+      '<label class="opt-in"><input type="checkbox" id="emailOptIn" checked><span>解約後も、お得なキャンペーン情報などをメールでお知らせする</span></label>';
+    document.querySelectorAll('#surveyReplies .qr').forEach(function(b){
+      b.onclick = function(){
+        var optIn = document.getElementById('emailOptIn');
+        state.emailOptIn = optIn ? optIn.checked : true;
+        var reason = SURVEY_REASONS.filter(function(r){ return r.v === b.dataset.v; })[0];
+        screen.innerHTML =
+          '<div class="eyebrow">'+STAGE_NAMES.survey+'</div>' +
+          '<h2>ご回答ありがとうございます</h2>' +
+          '<p>'+reason.reply+'</p>' +
+          '<button class="btn btn-primary" id="surveyBig">はい、お願いします</button>' +
+          '<button class="no-thanks" id="surveySmall" style="align-self:flex-start;">せっかくのご縁でしたが、離れることを選びます</button>';
+        document.getElementById('surveyBig').onclick = function(){
+          screen.querySelector('p').textContent = 'ありがとうございます。ではこのまま解約手続きを進めますね。';
+          screen.querySelector('#surveyBig').remove();
+          setTimeout(function(){ goto('phrase'); }, 900);
+        };
+        document.getElementById('surveySmall').onclick = function(){
+          state.retentionSurvived++;
+          goto('phrase');
+        };
+      };
+    });
+  };
+
+  var CONFIRM_PHRASE = '私は自分の意思で解約します';
+
+  renderers.phrase = function(){
+    screen.innerHTML =
+      '<div class="eyebrow">'+STAGE_NAMES.phrase+'</div>' +
+      '<h2>最終確認のため、以下の文章を入力してください</h2>' +
+      '<div class="card mono" style="color:var(--text);">'+CONFIRM_PHRASE+'</div>' +
+      '<input type="text" id="phraseInput" placeholder="上の文章を入力">' +
+      '<div class="err" id="phraseErr"></div>' +
+      '<button class="btn btn-primary" id="phraseNext">確定</button>';
+    document.getElementById('phraseNext').onclick = function(){
+      var v = document.getElementById('phraseInput').value.trim();
+      if(v !== CONFIRM_PHRASE){
+        document.getElementById('phraseErr').textContent = '入力内容が一致しません。一字一句正確に入力してください。';
+        return;
+      }
+      if(!state.phraseTimedOut){
+        state.phraseTimedOut = true;
+        renderers.phrase();
+        document.getElementById('phraseErr').textContent = '処理中に接続が切れました。もう一度、同じ文章を入力してください。';
+        return;
+      }
+      stopTimer();
+      goto('done');
+    };
+  };
+
+  function resetStats(){
+    state.retentionSurvived = 0;
+    state.chatLoops = 0;
+    state.colorMistakes = 0;
+    state.serverStalls = 0;
+    state.emailOptIn = true;
+    state.phraseTimedOut = false;
+    state.popupIndex = 0;
+  }
+
+  renderers.done = function(){
+    var elapsed = fmtTime(Date.now() - state.startTime);
+    var emailCount = state.emailOptIn ? (12 + Math.floor(Math.random()*36)) : 0;
+    screen.innerHTML =
+      '<div class="eyebrow">完了</div>' +
+      '<h2>解約が完了しました</h2>' +
+      '<div class="stat-grid">' +
+        '<div class="stat"><b>'+elapsed+'</b><span>所要時間</span></div>' +
+        '<div class="stat"><b>'+state.retentionSurvived+'</b><span>断った引き止め</span></div>' +
+        '<div class="stat"><b>'+state.chatLoops+'</b><span>チャットボットの言い訳</span></div>' +
+        '<div class="stat"><b>'+state.colorMistakes+'</b><span>色に釣られた回数</span></div>' +
+        '<div class="stat"><b>'+state.serverStalls+'</b><span>耐えたサーバー混雑</span></div>' +
+        '<div class="stat"><b>'+emailCount+'</b><span>今後届く宣伝メール(月)</span></div>' +
+      '</div>';
+    setTimeout(function(){
+      var tweetText = '『ズルズル+ 解約センター』を解約するのに'+elapsed+'かかった。断った引き止め'+state.retentionSurvived+'回、色の罠に'+state.colorMistakes+'回釣られ、サーバー混雑を'+state.serverStalls+'回耐えた。';
+      screen.innerHTML =
+        '<div class="eyebrow">お知らせ</div>' +
+        '<h2>来月から自動的に再開されます</h2>' +
+        '<p>プレミアムプランは解約完了の翌月、通常価格で自動的に再開されます。今回の手続きはお客様の意思確認として記録されました。</p>' +
+        '<button class="btn btn-outline" id="retry">もう一度地獄を味わう</button>' +
+        shareBlockHtml(tweetText);
+      document.getElementById('retry').onclick = function(){
+        resetStats();
+        goto('dashboard');
+      };
+    }, 2200);
+  };
+
+  renderers.gaveup = function(){
+    var elapsed = fmtTime(Date.now() - state.startTime);
+    var from = state.gaveUpFrom;
+    var reachedText = STAGE_NAMES[from] ? '「'+STAGE_NAMES[from]+'」で断念' : '断念';
+    screen.innerHTML =
+      '<div class="eyebrow">ギブアップ</div>' +
+      '<h2>心が折れました</h2>' +
+      '<p>解約できないまま、あなたは諦めることを選びました。それも立派な選択です。</p>' +
+      '<div class="stat-grid">' +
+        '<div class="stat"><b>'+elapsed+'</b><span>耐えた時間</span></div>' +
+        '<div class="stat"><b>'+state.retentionSurvived+'</b><span>断った引き止め</span></div>' +
+        '<div class="stat"><b>'+state.colorMistakes+'</b><span>色に釣られた回数</span></div>' +
+        '<div class="stat"><b>'+state.serverStalls+'</b><span>耐えたサーバー混雑</span></div>' +
+        '<div class="stat" style="grid-column:span 2;"><b style="font-size:14px;">'+reachedText+'</b><span>到達地点</span></div>' +
+      '</div>' +
+      '<button class="btn btn-outline" id="retryGaveup">もう一度挑む</button>' +
+      shareBlockHtml('『ズルズル+ 解約センター』で心が折れた。'+reachedText+'。耐えた時間'+elapsed+'。解約、できませんでした。');
+    document.getElementById('retryGaveup').onclick = function(){
+      resetStats();
+      goto('dashboard');
+    };
+  };
+
+  goto('dashboard');
+})();
+</script>
+</body>
+</html>
