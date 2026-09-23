@@ -280,6 +280,10 @@
     width:100%; padding:12px; border:none; border-radius:999px; background:var(--blush-deep); color:#fff;
     font-family:'Mochiy Pop One',sans-serif; font-size:.85rem; cursor:pointer;
   }
+  .modal .secondary-btn{
+    width:100%; padding:11px; border:1px solid var(--line); border-radius:999px; background:none; color:var(--ink-soft);
+    font-family:'Zen Maru Gothic',sans-serif; font-weight:700; font-size:.8rem; cursor:pointer; margin-top:8px;
+  }
 
   #toastWrap{position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:200; display:flex; flex-direction:column; gap:6px; align-items:center; pointer-events:none;}
   .toast{
@@ -594,6 +598,24 @@
   </div>
 </div>
 
+<div class="overlay" id="resetConfirmOverlay" hidden>
+  <div class="modal">
+    <h3>はじめからやり直す？</h3>
+    <p>これまでの育成データ・図鑑の記録はすべて消えます。この操作は取り消せません。</p>
+    <button class="primary-btn" id="resetConfirmBtn">やり直す</button>
+    <button class="secondary-btn" id="resetCancelBtn">やめる</button>
+  </div>
+</div>
+
+<div class="overlay" id="rebirthConfirmOverlay" hidden>
+  <div class="modal">
+    <h3>転生しますか？</h3>
+    <p id="rebirthConfirmText"></p>
+    <button class="primary-btn" id="rebirthConfirmBtn">転生する</button>
+    <button class="secondary-btn" id="rebirthCancelBtn">やめる</button>
+  </div>
+</div>
+
 <script>
 (function(){
   "use strict";
@@ -713,7 +735,7 @@
     'かわいいがすぎる、無理'
   ];
   var AVATAR_BG = ['var(--blush)','var(--mint)','var(--lavender)','var(--gold)'];
-  var SHARE_URL = 'https://www.vilc.tokyo/kadokko-idol/';
+  var SHARE_URL = 'https://www.vilc.tokyo/kadokko-idol/?v=2';
 
   var TEMPERAMENTS = [
     {id:'ganbari', em:'🔥', name:'がんばり屋'},
@@ -1112,11 +1134,16 @@
     });
   }
 
-  function doRebirth(){
+  function openRebirthConfirm(){
     if(!state.currentResultId) return;
     var baseKey = state.temperament+'_'+(state.resultRare?'rare':'normal');
     var resultName = RESULT_NAMES[baseKey] || '';
-    if(!confirm('「'+resultName+'」として今回の育成は完成しました。転生すると卵ごもりからやり直しになりますが、図鑑の記録は残り、次の世代から毎秒ファン・タップ獲得が恒久的に+5%されます。転生しますか？')) return;
+    $('rebirthConfirmText').textContent = '「'+resultName+'」として今回の育成は完成しました。転生すると卵ごもりからやり直しになりますが、図鑑の記録は残り、次の世代から毎秒ファン・タップ獲得が恒久的に+5%されます。転生しますか？';
+    $('rebirthConfirmOverlay').hidden = false;
+  }
+
+  function doRebirth(){
+    $('rebirthConfirmOverlay').hidden = true;
     state.rebirthCount += 1;
     state.hearts = 0; state.lifetimeFans = 0; state.totalClicks = 0; state.buzzCount = 0;
     state.tapEarned = 0; state.idleEarned = 0; state.buzzUntil = 0; state.lastStageSeen = 0;
@@ -1265,14 +1292,22 @@
       $('muteBtn').textContent = state.muted ? '🔇' : '🔊';
       save();
     });
-    $('rebirthBtn').addEventListener('click', doRebirth);
+    $('rebirthBtn').addEventListener('click', openRebirthConfirm);
+    $('rebirthCancelBtn').addEventListener('click', function(){
+      $('rebirthConfirmOverlay').hidden = true;
+    });
+    $('rebirthConfirmBtn').addEventListener('click', doRebirth);
     $('resetLink').addEventListener('click', function(){
-      if(confirm('本当にはじめからやり直しますか？これまでの育成データは消えます。')){
-        try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
-        state = defaultState();
-        save();
-        location.reload();
-      }
+      $('resetConfirmOverlay').hidden = false;
+    });
+    $('resetCancelBtn').addEventListener('click', function(){
+      $('resetConfirmOverlay').hidden = true;
+    });
+    $('resetConfirmBtn').addEventListener('click', function(){
+      try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
+      state = defaultState();
+      save();
+      location.reload();
     });
     $('nameStartBtn').addEventListener('click', function(){
       var v = $('nameInput').value.trim();
