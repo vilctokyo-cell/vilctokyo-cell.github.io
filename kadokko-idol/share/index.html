@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>かどっこアイドル | VILC</title>
+<meta name="description" content="隅っこ好きな内気な生き物がアイドルに育っていく、見てるだけでも楽しい放置育成ゲーム。VILC発の実験企画です。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VILC">
+<meta property="og:title" content="かどっこアイドル">
+<meta property="og:description" content="隅っこ好きな内気な生き物がアイドルに育っていく、見てるだけでも楽しい放置育成ゲーム">
+<meta property="og:url" content="https://www.vilc.tokyo/kadokko-idol/share/">
+<meta property="og:image" content="https://www.vilc.tokyo/kadokko-idol/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="かどっこアイドル">
+<meta name="twitter:description" content="隅っこ好きな内気な生き物がアイドルに育っていく、見てるだけでも楽しい放置育成ゲーム">
+<meta name="twitter:image" content="https://www.vilc.tokyo/kadokko-idol/assets/og-image.png">
+<style>
+  :root{
+    --cream:#FFF6EC; --paper:#FFFFFF; --ink:#5B4335; --ink-soft:#8A7365; --line:#F0E2D6;
+    --blush:#FFC9D6; --blush-deep:#FF8FAC; --body-color:#FFE3C7;
+    --shadow:0 10px 26px rgba(139,99,68,0.14);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --cream:#241925; --paper:#2E2030; --ink:#F6E9DF; --ink-soft:#CBB8C4; --line:rgba(255,255,255,0.09);
+      --blush:#5A3348; --blush-deep:#FF9FB7; --body-color:#4A3B36;
+      --shadow:0 10px 26px rgba(0,0,0,0.4);
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 10%, rgba(255,255,255,.55), transparent 42%),
+      radial-gradient(circle at 85% 92%, rgba(255,255,255,.35), transparent 42%),
+      linear-gradient(160deg, #FFE3ED 0%, #F3E1FF 55%, #E4D2FF 100%);
+    color:var(--ink); font-family:'Hiragino Maru Gothic ProN','Hiragino Sans',sans-serif;
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding:32px 16px;
+  }
+  .card{
+    background:var(--paper); border-radius:28px; box-shadow:var(--shadow);
+    max-width:420px; width:100%; padding:36px 28px 32px; text-align:center;
+  }
+  .char{width:150px; height:150px; margin:0 auto 12px; animation:bob 3.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+  .tag{
+    display:inline-block; font-size:.78rem; font-weight:700; color:var(--blush-deep);
+    background:var(--cream); padding:5px 16px; border-radius:999px; margin-bottom:14px;
+  }
+  h1{font-size:1.7rem; font-weight:900; color:#8A5A9A; margin:0 0 10px;}
+  p{font-size:.92rem; color:var(--ink-soft); line-height:1.7; margin:0 0 26px;}
+  .cta{
+    display:inline-block; font-size:1rem; font-weight:900; color:#fff; text-decoration:none;
+    background:linear-gradient(180deg,var(--blush-deep),#E8698B);
+    padding:14px 36px; border-radius:999px; box-shadow:0 6px 0 #C85272;
+  }
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #C85272;}
+  .brand{margin-top:22px; font-size:.68rem; font-weight:700; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+  <div class="card">
+    <span class="tag">見てるだけでも楽しい放置育成</span>
+    <svg class="char" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="70" cy="128" rx="12" ry="8" fill="var(--body-color)"/>
+      <ellipse cx="130" cy="128" rx="12" ry="8" fill="var(--body-color)"/>
+      <ellipse cx="52" cy="112" rx="11" ry="16" fill="var(--body-color)"/>
+      <ellipse cx="148" cy="112" rx="11" ry="16" fill="var(--body-color)"/>
+      <path d="M100 40 C150 40 168 78 168 112 C168 152 138 172 100 172 C62 172 32 152 32 112 C32 78 50 40 100 40 Z" fill="var(--body-color)"/>
+      <path d="M64 54 C58 32 80 28 78 48 Z" fill="var(--body-color)"/>
+      <path d="M136 54 C142 32 120 28 122 48 Z" fill="var(--body-color)"/>
+      <circle cx="82" cy="100" r="5.5" fill="#5B4335"/>
+      <circle cx="118" cy="100" r="5.5" fill="#5B4335"/>
+      <circle cx="84" cy="98" r="1.6" fill="#fff"/>
+      <circle cx="120" cy="98" r="1.6" fill="#fff"/>
+      <ellipse cx="70" cy="112" rx="8" ry="5" fill="var(--blush)" opacity=".85"/>
+      <ellipse cx="130" cy="112" rx="8" ry="5" fill="var(--blush)" opacity=".85"/>
+      <path d="M92 116 q8 7 16 0" stroke="#5B4335" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <path d="M100 40 L84 26 L84 46 Z" fill="var(--blush-deep)"/>
+      <path d="M100 40 L116 26 L116 46 Z" fill="var(--blush-deep)"/>
+      <circle cx="100" cy="40" r="5" fill="var(--blush-deep)"/>
+    </svg>
+    <h1>かどっこアイドル</h1>
+    <p>すみっこ好きな内気な子が、育て方しだいでアイドルに化ける放置育成ゲーム。VILC発の実験企画です。</p>
+    <a class="cta" href="https://www.vilc.tokyo/kadokko-idol/">🎮 遊んでみる</a>
+    <div class="brand">VILC Presents</div>
+  </div>
+</body>
+</html>
