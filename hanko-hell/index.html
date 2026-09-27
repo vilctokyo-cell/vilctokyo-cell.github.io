@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-05H87J02NQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-05H87J02NQ');
+</script>
+<title>ハンコ地獄 | VILC</title>
+<meta name="description" content="「承認」は即タップ、「却下・警告」は指を止めろ。1ミスで即終了のサックリ中毒性ゲーム。VILC発のくだらない実験企画です。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VILC">
+<meta property="og:title" content="ハンコ地獄">
+<meta property="og:description" content="「承認」は即タップ、「却下・警告」は指を止めろ。1ミスで即終了のサックリ中毒性ゲーム">
+<meta property="og:url" content="https://www.vilc.tokyo/hanko-hell/">
+<meta property="og:image" content="https://www.vilc.tokyo/hanko-hell/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ハンコ地獄">
+<meta name="twitter:description" content="「承認」は即タップ、「却下・警告」は指を止めろ。1ミスで即終了のサックリ中毒性ゲーム">
+<meta name="twitter:image" content="https://www.vilc.tokyo/hanko-hell/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap">
+<style>
+  :root{
+    --bg:#171d20;
+    --bg-vign:#0e1214;
+    --grid:rgba(238,240,238,0.035);
+    --paper:#e8e3d3;
+    --paper-line:#cfc7ab;
+    --ink:#2b2620;
+    --stamp-red:#c1272d;
+    --stamp-red-dark:#8e1c21;
+    --warn:#e2b93b;
+    --mint:#8fd9c4;
+    --foam:#eef0ee;
+    --foam-dim:rgba(238,240,238,0.68);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    height:100%;
+    margin:0;
+    background:var(--bg);
+    overflow:hidden;
+    overscroll-behavior:none;
+  }
+  #app{
+    position:relative;
+    height:100%;
+    width:100%;
+    overflow:hidden;
+    touch-action:none;
+    -webkit-user-select:none;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    font-family:'Zen Kaku Gothic New',sans-serif;
+  }
+  canvas#game{
+    display:block;
+    width:100%;
+    height:100%;
+  }
+  #flash{
+    position:absolute;
+    inset:0;
+    background:var(--stamp-red);
+    opacity:0;
+    pointer-events:none;
+  }
+  #flash.hit{ animation:flashAnim .4s ease-out; }
+  #flash.miss{ animation:flashAnim .4s ease-out; background:var(--warn); }
+  @keyframes flashAnim{ from{opacity:.5;} to{opacity:0;} }
+  #hud{
+    position:absolute;
+    top:0; left:0; right:0;
+    padding:calc(env(safe-area-inset-top,0px) + 18px) 22px 0;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:2px;
+    pointer-events:none;
+    z-index:4;
+  }
+  #hud .score{
+    font-family:'DotGothic16',monospace;
+    font-size:clamp(34px,11vw,46px);
+    color:var(--mint);
+    text-shadow:0 2px 10px rgba(0,0,0,0.5);
+    font-variant-numeric:tabular-nums;
+    line-height:1;
+  }
+  #hud .title-row{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.04em;
+    color:var(--foam);
+    margin-top:2px;
+  }
+  #hud .best{
+    font-size:11px;
+    letter-spacing:.08em;
+    color:var(--foam-dim);
+    font-variant-numeric:tabular-nums;
+    margin-top:2px;
+  }
+  #hud .best span{color:var(--foam);font-weight:700;}
+  #hud .home-tag{
+    pointer-events:auto;
+    margin-top:8px;
+    font-size:10px;
+    letter-spacing:.1em;
+    color:var(--foam-dim);
+    text-decoration:none;
+    border-bottom:1px solid rgba(238,240,238,0.3);
+    padding-bottom:1px;
+  }
+  #hud .home-tag:hover{color:var(--foam);}
+  #iconGroup{
+    position:absolute;
+    top:calc(env(safe-area-inset-top,0px) + 18px);
+    right:20px;
+    z-index:4;
+    pointer-events:none;
+  }
+  .icon-btn{
+    pointer-events:auto;
+    width:42px; height:42px;
+    border-radius:50%;
+    background:rgba(14,18,20,0.6);
+    border:1px solid rgba(238,240,238,0.22);
+    color:var(--foam);
+    display:flex; align-items:center; justify-content:center;
+    font-size:19px;
+    text-decoration:none;
+    box-shadow:0 4px 12px rgba(0,0,0,0.35);
+    transition:transform .15s ease;
+  }
+  .icon-btn:active{transform:scale(.9);}
+  #ticker{
+    position:absolute;
+    left:22px; right:78px;
+    top:calc(env(safe-area-inset-top,0px) + 152px);
+    text-align:left;
+    pointer-events:none;
+    font-size:11px;
+    letter-spacing:.03em;
+    color:var(--foam-dim);
+    z-index:3;
+  }
+  #ticker .tag{
+    display:inline-block;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.08em;
+    color:var(--bg);
+    background:var(--mint);
+    padding:2px 8px;
+    border-radius:999px;
+    margin-right:6px;
+  }
+  #milestone{
+    position:absolute;
+    top:calc(env(safe-area-inset-top,0px) + 20px);
+    left:0; right:0;
+    text-align:center;
+    pointer-events:none;
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    font-weight:900;
+    font-size:16px;
+    letter-spacing:.03em;
+    color:var(--warn);
+    text-shadow:0 2px 8px rgba(0,0,0,0.6);
+    opacity:0;
+    z-index:5;
+  }
+  #milestone.show{ animation:milestoneAnim 2.2s ease-out; }
+  @keyframes milestoneAnim{
+    0%{opacity:0; transform:translateY(6px);}
+    12%{opacity:1; transform:translateY(0);}
+    78%{opacity:1;}
+    100%{opacity:0;}
+  }
+  .overlay{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:linear-gradient(180deg, rgba(14,18,20,0.4), rgba(10,13,15,0.78));
+    pointer-events:none;
+    z-index:6;
+  }
+  .panel{
+    max-width:360px;
+    width:100%;
+    text-align:center;
+    pointer-events:auto;
+  }
+  .eyebrow{
+    margin:0 0 4px;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.22em;
+    color:var(--warn);
+    text-transform:uppercase;
+  }
+  .panel h1{
+    margin:0 0 14px;
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    font-weight:900;
+    font-size:clamp(30px,9vw,40px);
+    color:var(--foam);
+    text-wrap:balance;
+  }
+  .panel .desc{
+    margin:0 0 24px;
+    font-size:14px;
+    line-height:1.8;
+    color:var(--foam-dim);
+  }
+  .panel .cause{
+    margin:0 0 20px;
+    font-size:13.5px;
+    line-height:1.7;
+    color:var(--foam);
+    background:rgba(193,39,45,0.16);
+    border:1px solid rgba(193,39,45,0.4);
+    border-radius:12px;
+    padding:12px 14px;
+  }
+  .result{
+    display:flex;
+    justify-content:center;
+    gap:22px;
+    margin:0 0 26px;
+    flex-wrap:wrap;
+  }
+  .result .num{
+    font-family:'DotGothic16',monospace;
+    font-size:30px;
+    color:var(--mint);
+    font-variant-numeric:tabular-nums;
+    line-height:1.1;
+  }
+  .result .txt{
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    font-size:18px;
+    font-weight:700;
+    color:var(--foam);
+    line-height:1.3;
+  }
+  .result .label{
+    font-size:10px;
+    letter-spacing:.1em;
+    color:var(--foam-dim);
+  }
+  .btn-group{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .btn{
+    appearance:none;
+    border:none;
+    border-radius:999px;
+    padding:15px 34px;
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:.04em;
+    color:#1c0d0e;
+    background:linear-gradient(180deg,#e2555c,var(--stamp-red));
+    box-shadow:0 8px 22px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-block;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:active{
+    transform:translateY(2px) scale(.98);
+    box-shadow:0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .btn:focus-visible{ outline:2px solid var(--foam); outline-offset:3px; }
+  .btn-share{
+    background:rgba(238,240,238,0.1);
+    color:var(--foam);
+    border:1px solid rgba(238,240,238,0.3);
+    box-shadow:none;
+    padding:13px 30px;
+    font-size:14px;
+  }
+  .btn-share:active{ transform:translateY(2px) scale(.98); box-shadow:none; }
+  .home-link{
+    display:inline-block;
+    margin-top:18px;
+    font-size:12px;
+    color:var(--foam-dim);
+    text-decoration:none;
+    border-bottom:1px solid rgba(238,240,238,0.3);
+    padding-bottom:1px;
+  }
+  .home-link:hover{ color:var(--foam); }
+  [hidden]{display:none!important;}
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="game"></canvas>
+  <div id="flash"></div>
+
+  <div id="hud">
+    <div class="score" id="scoreVal">0</div>
+    <div class="title-row" id="titleVal">平社員</div>
+    <div class="best">BEST <span id="bestVal">0</span></div>
+    <a class="home-tag" href="https://www.vilc.tokyo/" target="_blank" rel="noopener">VILC Presents</a>
+  </div>
+
+  <div id="iconGroup">
+    <a class="icon-btn" id="shareIconBtn" href="#" target="_blank" rel="noopener" title="Xでシェア">🐦</a>
+  </div>
+
+  <div id="ticker"><span class="tag">社内速報</span><span id="tickerText">本日も定時退社を諦めた社員多数。</span></div>
+
+  <div id="milestone"></div>
+
+  <div id="startScreen" class="overlay">
+    <div class="panel">
+      <p class="eyebrow">本日の出社</p>
+      <h1>ハンコ地獄</h1>
+      <p class="desc">「承認」カードは即タップ。<br>「却下・警告」カードは指を止めろ。<br>ミスしたらそこで強制退場。</p>
+      <button id="startBtn" class="btn" type="button">タップして出社する</button>
+    </div>
+  </div>
+
+  <div id="gameOverScreen" class="overlay" hidden>
+    <div class="panel">
+      <p class="eyebrow" id="goEyebrow">強制退場</p>
+      <h1>またやらかした</h1>
+      <p class="cause" id="causeText"></p>
+      <div class="result">
+        <div>
+          <div class="num" id="finalScore">0</div>
+          <div class="label">決裁数</div>
+        </div>
+        <div>
+          <div class="txt" id="finalTitle">平社員</div>
+          <div class="label">到達役職</div>
+        </div>
+        <div>
+          <div class="num" id="finalBest">0</div>
+          <div class="label">BEST</div>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button id="retryBtn" class="btn" type="button">もう一度出社する</button>
+        <a id="shareLink" class="btn btn-share" href="#" target="_blank" rel="noopener">🐦 戦果をXでシェアする</a>
+      </div>
+      <a class="home-link" href="https://www.vilc.tokyo/" target="_blank" rel="noopener">VILCトップへ</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var app = document.getElementById('app');
+  var canvas = document.getElementById('game');
+  var ctx = canvas.getContext('2d', { alpha:false });
+  var flashEl = document.getElementById('flash');
+  var scoreEl = document.getElementById('scoreVal');
+  var titleEl = document.getElementById('titleVal');
+  var bestEl = document.getElementById('bestVal');
+  var tickerEl = document.getElementById('tickerText');
+  var milestoneEl = document.getElementById('milestone');
+  var startScreen = document.getElementById('startScreen');
+  var gameOverScreen = document.getElementById('gameOverScreen');
+  var goEyebrow = document.getElementById('goEyebrow');
+  var causeText = document.getElementById('causeText');
+  var finalScoreEl = document.getElementById('finalScore');
+  var finalTitleEl = document.getElementById('finalTitle');
+  var finalBestEl = document.getElementById('finalBest');
+  var startBtn = document.getElementById('startBtn');
+  var retryBtn = document.getElementById('retryBtn');
+  var shareIconBtn = document.getElementById('shareIconBtn');
+  var shareLink = document.getElementById('shareLink');
+
+  var SHARE_URL = 'https://www.vilc.tokyo/hanko-hell/share/';
+
+  var PAPER = '#e8e3d3';
+  var PAPER_LINE = '#cfc7ab';
+  var INK = '#2b2620';
+  var STAMP_RED = '#c1272d';
+  var STAMP_RED_DARK = '#8e1c21';
+  var WARN = '#e2b93b';
+  var MINT = '#8fd9c4';
+  var FOAM = '#eef0ee';
+
+  var JOB_TITLES = [
+    [0,'平社員'],[6,'主任'],[14,'係長'],[24,'課長'],
+    [36,'部長'],[50,'取締役'],[68,'社長'],[90,'会長'],[120,'伝説の決裁マシーン']
+  ];
+
+  var APPROVE_SUBS = ['定例会議費','備品購入','出張申請','残業申請','新規契約','システム改修','交際費精算','研修参加費'];
+  var TRAP_KINDS = [
+    { label:'却下', icon:'⚠️', sub:'差し戻し案件', msg:'差し戻し案件を承認してしまった…やり直し決定。' },
+    { label:'コンプラ違反', icon:'🚨', sub:'要確認', msg:'コンプラ違反を見逃して承認…社内は大炎上。' },
+    { label:'情報漏洩', icon:'🔒', sub:'極秘', msg:'極秘文書を誤って承認…左遷が内定した。' },
+    { label:'経費不正', icon:'💸', sub:'税務調査対象', msg:'不正経費を通してしまい経理から呼び出し。' }
+  ];
+  var MISS_MESSAGES = [
+    '見逃して未処理の山に埋もれた…',
+    'ボーッとしてたら締切が過ぎていた…',
+    '気づいたら日付が変わっていた…'
+  ];
+
+  var TICKER_A = ['来期に向けて','全社一丸となって','まずは','とりあえず','本件については','再度','念のため','週明けまでに'];
+  var TICKER_B = ['シナジーを最大化し','ローンチまでの導線を握り','エビデンスをベースに','ペライチにまとめて','スコープを握った上で','KPIを握りつつ','認識をすり合わせて'];
+  var TICKER_C = ['巻き取ります。','握っておきます。','承知しました。','持ち帰らせてください。','ご確認ください。','認識合わせましょう。'];
+
+  function jobTitleFor(score){
+    var t = JOB_TITLES[0][1];
+    for(var i=0;i<JOB_TITLES.length;i++){ if(score>=JOB_TITLES[i][0]) t=JOB_TITLES[i][1]; }
+    return t;
+  }
+  function jobIndexFor(score){
+    var idx=0;
+    for(var i=0;i<JOB_TITLES.length;i++){ if(score>=JOB_TITLES[i][0]) idx=i; }
+    return idx;
+  }
+
+  var W=0,H=0,dpr=1;
+  var state='ready';
+  var score=0, best=0;
+  try { best = parseInt(localStorage.getItem('hanko-hell-best')||'0',10)||0; } catch(e){ best=0; }
+  bestEl.textContent = best;
+
+  var lastJobIdx = 0;
+  var lastTime=null, elapsed=0;
+  var pile=[];
+  var card=null;
+  var shakeT=0, shakeMag=0;
+  var tickerTimer=0;
+
+  function clamp(v,lo,hi){ return Math.max(lo,Math.min(hi,v)); }
+  function rand(a,b){ return a+Math.random()*(b-a); }
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function timeLimitFor(s){ return clamp(1.45 - s*0.016, 0.5, 1.45); }
+  function trapChanceFor(s){ return clamp(0.16 + s*0.0035, 0.16, 0.42); }
+
+  function resize(){
+    var rect = app.getBoundingClientRect();
+    W = rect.width; H = rect.height;
+    dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(W*dpr);
+    canvas.height = Math.round(H*dpr);
+    canvas.style.width = W+'px';
+    canvas.style.height = H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function shareText(){
+    if(score>0){
+      return '『ハンコ地獄』で決裁'+score+'件、役職は'+jobTitleFor(score)+'まで到達!(ベスト'+best+') 承認は即タップ、却下は指を止めろ🖋️';
+    }
+    return '承認は即タップ、却下・警告は指を止めろ。1ミスで即終了のサックリ中毒性ゲーム『ハンコ地獄』';
+  }
+  function updateShareLink(){
+    var url = 'https://twitter.com/intent/tweet?text='+encodeURIComponent(shareText())+'&url='+encodeURIComponent(SHARE_URL);
+    if(shareIconBtn) shareIconBtn.href = url;
+    if(shareLink) shareLink.href = url;
+  }
+
+  function newCard(){
+    var isTrap = Math.random() < trapChanceFor(score);
+    var tl = timeLimitFor(score);
+    var c = {
+      type: isTrap ? 'trap' : 'approve',
+      docNo: String(Math.floor(rand(1000,9999))),
+      rot: rand(-0.05,0.05),
+      timeLimit: tl,
+      timeLeft: tl,
+      stampKind: null,
+      stampT: null
+    };
+    if(isTrap){
+      var tk = pick(TRAP_KINDS);
+      c.label = tk.label; c.icon = tk.icon; c.sub = tk.sub; c.msg = tk.msg;
+    } else {
+      c.label = '承認'; c.icon=''; c.sub = pick(APPROVE_SUBS);
+    }
+    return c;
+  }
+
+  function updateHud(){
+    scoreEl.textContent = score;
+    titleEl.textContent = jobTitleFor(score);
+    var idx = jobIndexFor(score);
+    if(idx > lastJobIdx){
+      lastJobIdx = idx;
+      showMilestone('昇進!「'+JOB_TITLES[idx][1]+'」に昇格');
+    }
+  }
+
+  function showMilestone(text){
+    milestoneEl.textContent = text;
+    milestoneEl.classList.remove('show');
+    void milestoneEl.offsetWidth;
+    milestoneEl.classList.add('show');
+  }
+
+  function resetGame(){
+    score = 0;
+    lastJobIdx = 0;
+    pile = [];
+    card = newCard();
+    scoreEl.textContent = '0';
+    titleEl.textContent = jobTitleFor(0);
+    milestoneEl.classList.remove('show');
+    tickerTimer = 0;
+  }
+
+  function startGame(){
+    resetGame();
+    state = 'playing';
+    startScreen.hidden = true;
+    gameOverScreen.hidden = true;
+  }
+
+  function endGame(cause, msg){
+    if(state !== 'playing') return;
+    state = 'gameover';
+    if(score > best){
+      best = score;
+      try{ localStorage.setItem('hanko-hell-best', String(best)); }catch(e){}
+    }
+    bestEl.textContent = best;
+    finalScoreEl.textContent = score;
+    finalTitleEl.textContent = jobTitleFor(score);
+    finalBestEl.textContent = best;
+    causeText.textContent = msg;
+    goEyebrow.textContent = (cause==='trap') ? '誤爆' : '見逃し';
+    updateShareLink();
+    gameOverScreen.hidden = false;
+    flashEl.classList.remove('hit','miss');
+    void flashEl.offsetWidth;
+    flashEl.classList.add(cause==='trap' ? 'hit' : 'miss');
+    shakeT = 0.3; shakeMag = cause==='trap' ? 10 : 5;
+    if(window.gtag){ gtag('event','game_over',{event_category:'hanko_hell',event_label:cause,value:score}); }
+  }
+
+  function resolveApprove(){
+    if(!card || card.stampT!=null || state!=='playing') return;
+    if(card.type==='approve'){
+      card.stampKind='approve-success';
+      card.stampT=0;
+      score++;
+      updateHud();
+    } else {
+      card.stampKind='trap-fail';
+      card.stampT=0;
+      shakeT=0.25; shakeMag=6;
+    }
+  }
+
+  function handleTap(e){
+    e.preventDefault();
+    if(state==='ready'){ startGame(); }
+    else if(state==='playing'){ resolveApprove(); }
+    else if(state==='gameover'){ startGame(); }
+  }
+
+  canvas.addEventListener('pointerdown', handleTap, { passive:false });
+  startBtn.addEventListener('click', function(e){ e.stopPropagation(); startGame(); });
+  retryBtn.addEventListener('click', function(e){ e.stopPropagation(); startGame(); });
+
+  window.addEventListener('keydown', function(e){
+    if(e.code==='Space' || e.code==='Enter'){
+      e.preventDefault();
+      if(state==='ready'){ startGame(); }
+      else if(state==='playing'){ resolveApprove(); }
+      else if(state==='gameover'){ startGame(); }
+    }
+  });
+
+  document.addEventListener('visibilitychange', function(){ if(document.hidden){ lastTime=null; } });
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', function(){ setTimeout(resize,50); });
+
+  var STAMP_DURATION = 0.34;
+
+  function update(dt){
+    tickerTimer -= dt;
+    if(tickerTimer<=0){
+      tickerTimer = rand(3.2,5.5);
+      tickerEl.textContent = pick(TICKER_A)+pick(TICKER_B)+pick(TICKER_C);
+    }
+    if(shakeT>0){ shakeT-=dt; if(shakeT<0) shakeT=0; }
+
+    if(state!=='playing' || !card) return;
+
+    if(card.stampT!=null){
+      card.stampT += dt;
+      if(card.stampT >= STAMP_DURATION){
+        if(card.stampKind==='approve-success'){
+          pile.push({ x:rand(0.12,0.88), y:rand(0.7,0.93), rot:rand(-0.35,0.35) });
+          if(pile.length>60) pile.shift();
+          card = newCard();
+        } else if(card.stampKind==='trap-avoided'){
+          card = newCard();
+        } else if(card.stampKind==='trap-fail'){
+          endGame('trap', card.msg);
+        } else if(card.stampKind==='approve-miss'){
+          endGame('miss', pick(MISS_MESSAGES));
+        }
+      }
+      return;
+    }
+
+    card.timeLeft -= dt;
+    if(card.timeLeft <= 0){
+      if(card.type==='approve'){
+        card.stampKind='approve-miss';
+        card.stampT=0;
+      } else {
+        card.stampKind='trap-avoided';
+        card.stampT=0;
+        score++;
+        updateHud();
+      }
+    }
+  }
+
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  function drawBackground(){
+    ctx.fillStyle = '#171d20';
+    ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle = 'rgba(238,240,238,0.035)';
+    ctx.lineWidth = 1;
+    var step = 46;
+    for(var x=0;x<W;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for(var y=0;y<H;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    var vg = ctx.createRadialGradient(W/2,H*0.4,H*0.15,W/2,H*0.4,H*0.85);
+    vg.addColorStop(0,'rgba(0,0,0,0)');
+    vg.addColorStop(1,'rgba(0,0,0,0.55)');
+    ctx.fillStyle = vg;
+    ctx.fillRect(0,0,W,H);
+  }
+
+  function drawPile(){
+    for(var i=0;i<pile.length;i++){
+      var p = pile[i];
+      var px = p.x*W, py = p.y*H;
+      ctx.save();
+      ctx.translate(px,py);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      roundRect(-19,-13,38,26,4); ctx.fill();
+      ctx.fillStyle = PAPER;
+      roundRect(-20,-14,38,26,4); ctx.fill();
+      ctx.strokeStyle = 'rgba(193,39,45,0.7)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(6,-1,7,0,Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  function drawStamp(kind, t, cw, ch){
+    var p = clamp(t/STAMP_DURATION, 0, 1);
+    var scale = 1.5 - 0.5*Math.min(p*2,1);
+    var alpha = Math.min(p*2.2,1);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(0, -4);
+    ctx.rotate(-0.18);
+    ctx.scale(scale, scale);
+    var color = (kind==='approve-success') ? STAMP_RED
+              : (kind==='trap-avoided') ? MINT
+              : (kind==='trap-fail') ? STAMP_RED_DARK
+              : '#7a746a';
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(0,0,34,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,0,28,0,Math.PI*2); ctx.stroke();
+    ctx.font = 'bold 20px "Zen Kaku Gothic New"';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    var label = (kind==='approve-success') ? '承認'
+              : (kind==='trap-avoided') ? '回避'
+              : (kind==='trap-fail') ? '誤承認'
+              : '未処理';
+    ctx.fillText(label, 0, 2);
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  }
+
+  function drawCard(){
+    if(!card) return;
+    var cw = clamp(W*0.62, 210, 320);
+    var ch = cw*1.32;
+    var cx = W/2, cy = H*0.42;
+
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(card.rot);
+
+    ctx.fillStyle = 'rgba(0,0,0,0.4)';
+    roundRect(-cw/2+5,-ch/2+7,cw,ch,16); ctx.fill();
+
+    ctx.fillStyle = PAPER;
+    roundRect(-cw/2,-ch/2,cw,ch,16); ctx.fill();
+
+    ctx.strokeStyle = PAPER_LINE;
+    ctx.lineWidth = 1.3;
+    for(var i=0;i<5;i++){
+      var ly = -ch/2 + 58 + i*24;
+      ctx.beginPath(); ctx.moveTo(-cw/2+18, ly); ctx.lineTo(cw/2-18, ly); ctx.stroke();
+    }
+
+    ctx.fillStyle = INK;
+    ctx.font = '12px "DotGothic16",monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('稟議書 No.'+card.docNo, -cw/2+16, -ch/2+26);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(43,38,32,0.65)';
+    ctx.fillText(card.sub, cw/2-16, -ch/2+26);
+
+    ctx.textAlign = 'center';
+    if(card.type==='approve'){
+      ctx.fillStyle = INK;
+      ctx.font = '900 32px "Zen Kaku Gothic New"';
+      ctx.fillText('承認', 0, ch*0.30);
+    } else {
+      ctx.fillStyle = STAMP_RED;
+      ctx.font = '900 24px "Zen Kaku Gothic New"';
+      ctx.fillText(card.icon, 0, ch*0.20);
+      ctx.font = '900 26px "Zen Kaku Gothic New"';
+      ctx.fillText(card.label, 0, ch*0.32);
+    }
+
+    if(card.stampT!=null){
+      drawStamp(card.stampKind, card.stampT, cw, ch);
+    }
+
+    ctx.restore();
+
+    if(card.stampT==null){
+      var barW = cw, barH = 7;
+      var bx = cx - barW/2, by = cy + ch/2 + 20;
+      var frac = clamp(card.timeLeft / card.timeLimit, 0, 1);
+      ctx.fillStyle = 'rgba(238,240,238,0.14)';
+      roundRect(bx,by,barW,barH,4); ctx.fill();
+      ctx.fillStyle = frac < 0.28 ? STAMP_RED : MINT;
+      roundRect(bx,by,barW*frac,barH,4); ctx.fill();
+    }
+  }
+
+  function render(){
+    ctx.save();
+    if(shakeT>0){
+      var m = shakeMag * (shakeT/0.3);
+      ctx.translate(rand(-m,m), rand(-m,m));
+    }
+    drawBackground();
+    drawPile();
+    if(state!=='ready'){ drawCard(); }
+    ctx.restore();
+  }
+
+  function loop(ts){
+    if(lastTime===null) lastTime = ts;
+    var dt = Math.min((ts-lastTime)/1000, 0.05);
+    lastTime = ts;
+    elapsed += dt;
+    update(dt);
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  resize();
+  card = newCard();
+  updateShareLink();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
