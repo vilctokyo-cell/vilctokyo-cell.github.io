@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-05H87J02NQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-05H87J02NQ');
+</script>
+<title>鯉の滝登り | VILC</title>
+<meta name="description" content="タップで鯉を導き、流れてくる岩の隙間をくぐり抜けるスマホ向け無限スクロールゲーム。VILC発の実験企画です。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VILC">
+<meta property="og:title" content="鯉の滝登り">
+<meta property="og:description" content="タップで鯉を導き、流れてくる岩の隙間をくぐり抜けるスマホ向け無限スクロールゲーム">
+<meta property="og:url" content="https://www.vilc.tokyo/koi-nobori/">
+<meta property="og:image" content="https://www.vilc.tokyo/koi-nobori/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="鯉の滝登り">
+<meta name="twitter:description" content="タップで鯉を導き、流れてくる岩の隙間をくぐり抜けるスマホ向け無限スクロールゲーム">
+<meta name="twitter:image" content="https://www.vilc.tokyo/koi-nobori/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --bg-deep:#0f2233;
+    --bg-mid:#1d4356;
+    --bg-shallow:#356e83;
+    --stone:#5c5648;
+    --stone-dark:#3a362c;
+    --stone-moss:#5f7a4f;
+    --koi:#e2652f;
+    --koi-light:#f6b184;
+    --koi-belly:#fbe3c9;
+    --koi-spot:#241d1a;
+    --foam:#f4efe4;
+    --foam-dim:rgba(244,239,228,0.72);
+    --gold:#d9a441;
+    --danger:#e0543f;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    height:100%;
+    margin:0;
+    background:var(--bg-deep);
+    overflow:hidden;
+    overscroll-behavior:none;
+  }
+  #app{
+    position:relative;
+    height:100%;
+    width:100%;
+    overflow:hidden;
+    touch-action:none;
+    -webkit-user-select:none;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    font-family:'Zen Kaku Gothic New',sans-serif;
+  }
+  canvas#game{
+    display:block;
+    width:100%;
+    height:100%;
+  }
+  #flash{
+    position:absolute;
+    inset:0;
+    background:var(--danger);
+    opacity:0;
+    pointer-events:none;
+  }
+  #flash.hit{
+    animation:flashAnim .45s ease-out;
+  }
+  @keyframes flashAnim{
+    from{opacity:.55;}
+    to{opacity:0;}
+  }
+  #hud{
+    position:absolute;
+    top:0; left:0; right:0;
+    padding:calc(env(safe-area-inset-top,0px) + 18px) 22px 0;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:2px;
+    pointer-events:none;
+    z-index:4;
+  }
+  #hud .score{
+    font-family:'Shippori Mincho',serif;
+    font-weight:700;
+    font-size:clamp(32px,10vw,44px);
+    color:var(--gold);
+    text-shadow:0 2px 10px rgba(0,0,0,0.45);
+    font-variant-numeric:tabular-nums;
+    line-height:1;
+  }
+  #hud .best{
+    font-size:12px;
+    letter-spacing:.08em;
+    color:var(--foam-dim);
+    font-variant-numeric:tabular-nums;
+  }
+  #hud .best span{color:var(--foam);font-weight:700;}
+  #hud .home-tag{
+    pointer-events:auto;
+    margin-top:8px;
+    font-size:10px;
+    letter-spacing:.1em;
+    color:var(--foam-dim);
+    text-decoration:none;
+    border-bottom:1px solid rgba(244,239,228,0.3);
+    padding-bottom:1px;
+  }
+  #hud .home-tag:hover{color:var(--foam);}
+  #iconGroup{
+    position:absolute;
+    top:calc(env(safe-area-inset-top,0px) + 18px);
+    right:20px;
+    z-index:4;
+    pointer-events:none;
+  }
+  .icon-btn{
+    pointer-events:auto;
+    width:42px; height:42px;
+    border-radius:50%;
+    background:rgba(15,34,51,0.55);
+    border:1px solid rgba(244,239,228,0.28);
+    color:var(--foam);
+    display:flex; align-items:center; justify-content:center;
+    font-size:19px;
+    text-decoration:none;
+    box-shadow:0 4px 12px rgba(0,0,0,0.3);
+    transition:transform .15s ease;
+  }
+  .icon-btn:active{transform:scale(.9);}
+  #milestone{
+    position:absolute;
+    top:calc(env(safe-area-inset-top,0px) + 20px);
+    left:0; right:0;
+    text-align:center;
+    pointer-events:none;
+    font-family:'Shippori Mincho',serif;
+    font-size:15px;
+    letter-spacing:.06em;
+    color:var(--foam);
+    text-shadow:0 2px 8px rgba(0,0,0,0.5);
+    opacity:0;
+  }
+  #milestone.show{
+    animation:milestoneAnim 2.4s ease-out;
+  }
+  @keyframes milestoneAnim{
+    0%{opacity:0; transform:translateY(6px);}
+    12%{opacity:1; transform:translateY(0);}
+    78%{opacity:1;}
+    100%{opacity:0;}
+  }
+  .overlay{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:linear-gradient(180deg, rgba(10,22,33,0.35), rgba(8,18,28,0.72));
+    pointer-events:none;
+    z-index:6;
+  }
+  .panel{
+    max-width:360px;
+    width:100%;
+    text-align:center;
+    pointer-events:auto;
+  }
+  .eyebrow{
+    margin:0 0 4px;
+    font-size:11px;
+    letter-spacing:.22em;
+    color:var(--gold);
+    text-transform:uppercase;
+  }
+  .panel h1{
+    margin:0 0 14px;
+    font-family:'Shippori Mincho',serif;
+    font-weight:700;
+    font-size:clamp(30px,9vw,40px);
+    color:var(--foam);
+    text-wrap:balance;
+  }
+  .panel .desc{
+    margin:0 0 26px;
+    font-size:14px;
+    line-height:1.8;
+    color:var(--foam-dim);
+  }
+  .result{
+    display:flex;
+    justify-content:center;
+    gap:28px;
+    margin:0 0 28px;
+  }
+  .result .num{
+    font-family:'Shippori Mincho',serif;
+    font-weight:700;
+    font-size:34px;
+    color:var(--gold);
+    font-variant-numeric:tabular-nums;
+    line-height:1.1;
+  }
+  .result .label{
+    font-size:11px;
+    letter-spacing:.1em;
+    color:var(--foam-dim);
+  }
+  .btn-group{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .btn{
+    appearance:none;
+    border:none;
+    border-radius:999px;
+    padding:15px 34px;
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:.04em;
+    color:#241608;
+    background:linear-gradient(180deg,#ecc06a,var(--gold));
+    box-shadow:0 8px 22px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-block;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:active{
+    transform:translateY(2px) scale(.98);
+    box-shadow:0 4px 12px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  .btn:focus-visible{
+    outline:2px solid var(--foam);
+    outline-offset:3px;
+  }
+  .btn-share{
+    background:rgba(244,239,228,0.1);
+    color:var(--foam);
+    border:1px solid rgba(244,239,228,0.35);
+    box-shadow:none;
+    padding:13px 30px;
+    font-size:14px;
+  }
+  .btn-share:active{
+    transform:translateY(2px) scale(.98);
+    box-shadow:none;
+  }
+  .home-link{
+    display:inline-block;
+    margin-top:18px;
+    font-size:12px;
+    color:var(--foam-dim);
+    text-decoration:none;
+    border-bottom:1px solid rgba(244,239,228,0.3);
+    padding-bottom:1px;
+  }
+  .home-link:hover{color:var(--foam);}
+  [hidden]{display:none!important;}
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="game"></canvas>
+  <div id="flash"></div>
+
+  <div id="hud">
+    <div class="score" id="scoreVal">0</div>
+    <div class="best">BEST <span id="bestVal">0</span></div>
+    <a class="home-tag" href="https://www.vilc.tokyo/" target="_blank" rel="noopener">VILC Presents</a>
+  </div>
+
+  <div id="iconGroup">
+    <a class="icon-btn" id="shareIconBtn" href="#" target="_blank" rel="noopener" title="Xでシェア">🐦</a>
+  </div>
+
+  <div id="milestone">登龍門、突破——鯉は龍になろうとしている</div>
+
+  <div id="startScreen" class="overlay">
+    <div class="panel">
+      <p class="eyebrow">登龍門 伝説</p>
+      <h1>鯉の滝登り</h1>
+      <p class="desc">画面をタップして鯉を上へ導き、流れてくる岩の隙間をくぐり抜けよう。<br>百の瀬を越えた鯉は、龍になるという。</p>
+      <button id="startBtn" class="btn" type="button">タップして泳ぎ出す</button>
+    </div>
+  </div>
+
+  <div id="gameOverScreen" class="overlay" hidden>
+    <div class="panel">
+      <p class="eyebrow">力尽きた</p>
+      <h1>また挑もう</h1>
+      <div class="result">
+        <div>
+          <div class="num" id="finalScore">0</div>
+          <div class="label">SCORE</div>
+        </div>
+        <div>
+          <div class="num" id="finalBest">0</div>
+          <div class="label">BEST</div>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button id="retryBtn" class="btn" type="button">もう一度泳ぐ</button>
+        <a id="shareLink" class="btn btn-share" href="#" target="_blank" rel="noopener">🐦 スコアをXでシェアする</a>
+      </div>
+      <a class="home-link" href="https://www.vilc.tokyo/" target="_blank" rel="noopener">VILCトップへ</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var app = document.getElementById('app');
+  var canvas = document.getElementById('game');
+  var ctx = canvas.getContext('2d', { alpha:false });
+  var flashEl = document.getElementById('flash');
+  var scoreEl = document.getElementById('scoreVal');
+  var bestEl = document.getElementById('bestVal');
+  var milestoneEl = document.getElementById('milestone');
+  var startScreen = document.getElementById('startScreen');
+  var gameOverScreen = document.getElementById('gameOverScreen');
+  var finalScoreEl = document.getElementById('finalScore');
+  var finalBestEl = document.getElementById('finalBest');
+  var startBtn = document.getElementById('startBtn');
+  var retryBtn = document.getElementById('retryBtn');
+  var shareIconBtn = document.getElementById('shareIconBtn');
+  var shareLink = document.getElementById('shareLink');
+
+  var SHARE_URL = 'https://www.vilc.tokyo/koi-nobori/share/';
+
+  var W = 0, H = 0, dpr = 1;
+  var state = 'ready'; // ready | playing | gameover
+  var score = 0;
+  var best = 0;
+  try { best = parseInt(localStorage.getItem('koi-nobori-best') || '0', 10) || 0; } catch(e){ best = 0; }
+  bestEl.textContent = best;
+
+  var GRAVITY = 1500;
+  var FLAP_V = -430;
+  var OBSTACLE_W = 68;
+  var SPEED_BASE = 175;
+
+  var koi = { x:0, y:0, vy:0, r:17, rot:0 };
+  var obstacles = [];
+  var spawnTimer = 0;
+  var leaves = [];
+  var bubbles = [];
+  var milestoneShown = false;
+  var lastTime = null;
+  var elapsed = 0;
+
+  function clamp(v,lo,hi){ return Math.max(lo, Math.min(hi, v)); }
+  function rand(a,b){ return a + Math.random()*(b-a); }
+
+  function shareText(){
+    if(score > 0){
+      return '「鯉の滝登り」でスコア'+score+'点!(ベスト'+best+') 岩をかわして滝を登れ🐟';
+    }
+    return '鯉を岩の隙間へ導く、スマホ向け無限スクロールゲーム『鯉の滝登り』';
+  }
+
+  function updateShareLink(){
+    var url = 'https://twitter.com/intent/tweet?text='+encodeURIComponent(shareText())+'&url='+encodeURIComponent(SHARE_URL);
+    if(shareIconBtn) shareIconBtn.href = url;
+    if(shareLink) shareLink.href = url;
+  }
+
+  function resize(){
+    var rect = app.getBoundingClientRect();
+    W = rect.width;
+    H = rect.height;
+    dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(W*dpr);
+    canvas.height = Math.round(H*dpr);
+    canvas.style.width = W+'px';
+    canvas.style.height = H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    koi.x = W*0.26;
+    if(state==='ready'){ koi.y = H*0.8; }
+  }
+
+  function initParticles(){
+    leaves = [];
+    for(var i=0;i<6;i++){
+      leaves.push({ x:rand(0,W), y:rand(H*0.1,H*0.85), r:rand(5,9), speed:rand(14,26), sway:rand(0,Math.PI*2) });
+    }
+    bubbles = [];
+    for(var j=0;j<14;j++){
+      bubbles.push({ x:rand(0,W), y:rand(0,H), r:rand(1.2,3.2), speed:rand(10,28) });
+    }
+  }
+
+  function resetGame(){
+    score = 0;
+    obstacles = [];
+    spawnTimer = 0.4;
+    koi.y = H/2;
+    koi.vy = 0;
+    koi.rot = 0;
+    milestoneShown = false;
+    scoreEl.textContent = '0';
+    milestoneEl.classList.remove('show');
+  }
+
+  function startGame(){
+    resetGame();
+    state = 'playing';
+    startScreen.hidden = true;
+    gameOverScreen.hidden = true;
+  }
+
+  function endGame(){
+    if(state !== 'playing') return;
+    state = 'gameover';
+    if(score > best){
+      best = score;
+      try{ localStorage.setItem('koi-nobori-best', String(best)); }catch(e){}
+    }
+    bestEl.textContent = best;
+    finalScoreEl.textContent = score;
+    finalBestEl.textContent = best;
+    updateShareLink();
+    gameOverScreen.hidden = false;
+    flashEl.classList.remove('hit');
+    void flashEl.offsetWidth;
+    flashEl.classList.add('hit');
+    if(window.gtag){ gtag('event','game_over',{event_category:'koi_nobori',event_label:'score',value:score}); }
+  }
+
+  function flap(){
+    koi.vy = FLAP_V;
+  }
+
+  function handleTap(e){
+    e.preventDefault();
+    if(state==='ready'){ startGame(); }
+    else if(state==='playing'){ flap(); }
+    else if(state==='gameover'){ startGame(); }
+  }
+
+  canvas.addEventListener('pointerdown', handleTap, { passive:false });
+  startBtn.addEventListener('click', function(e){ e.stopPropagation(); startGame(); });
+  retryBtn.addEventListener('click', function(e){ e.stopPropagation(); startGame(); });
+
+  window.addEventListener('keydown', function(e){
+    if(e.code==='Space' || e.code==='ArrowUp'){
+      e.preventDefault();
+      if(state==='ready'){ startGame(); }
+      else if(state==='playing'){ flap(); }
+      else if(state==='gameover'){ startGame(); }
+    }
+  });
+
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden){ lastTime = null; }
+  });
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', function(){ setTimeout(resize, 50); });
+
+  function spawnObstacle(){
+    var margin = 40;
+    var gapHalf = clamp(112 - score*1.4, 62, 112);
+    gapHalf = Math.min(gapHalf, H/2 - margin - 8);
+    if(gapHalf < 40) gapHalf = 40;
+    var gapCenter = rand(margin+gapHalf, H-margin-gapHalf);
+    if(!isFinite(gapCenter)) gapCenter = H/2;
+    obstacles.push({ x:W+OBSTACLE_W, width:OBSTACLE_W, gapCenter:gapCenter, gapHalf:gapHalf, scored:false });
+  }
+
+  function showMilestone(){
+    milestoneEl.classList.remove('show');
+    void milestoneEl.offsetWidth;
+    milestoneEl.classList.add('show');
+  }
+
+  function update(dt, t){
+    for(var i=0;i<leaves.length;i++){
+      var lf = leaves[i];
+      lf.x -= lf.speed*dt;
+      if(lf.x < -12){ lf.x = W+12; lf.y = rand(H*0.1,H*0.85); }
+    }
+    for(var j=0;j<bubbles.length;j++){
+      var bb = bubbles[j];
+      bb.y -= bb.speed*dt;
+      if(bb.y < -6){ bb.y = H+6; bb.x = rand(0,W); }
+    }
+
+    if(state==='ready'){
+      koi.y = H*0.8 + Math.sin(t*2.1)*10;
+      koi.rot = Math.sin(t*2.1)*0.12;
+      return;
+    }
+    if(state!=='playing') return;
+
+    koi.vy += GRAVITY*dt;
+    koi.y += koi.vy*dt;
+    koi.rot = clamp(koi.vy/520, -0.6, 1.0);
+
+    if(koi.y - koi.r < 0){ koi.y = koi.r; koi.vy = 0; }
+    if(koi.y + koi.r > H){ endGame(); return; }
+
+    var speed = SPEED_BASE + Math.min(score*4.2, 150);
+
+    spawnTimer -= dt;
+    if(spawnTimer <= 0){
+      spawnObstacle();
+      spawnTimer = 1.45;
+    }
+
+    for(var k=0;k<obstacles.length;k++){
+      var ob = obstacles[k];
+      ob.x -= speed*dt;
+
+      var hitX = koi.x + koi.r > ob.x && koi.x - koi.r < ob.x + ob.width;
+      if(hitX){
+        var throughGap = (koi.y - koi.r > ob.gapCenter - ob.gapHalf) && (koi.y + koi.r < ob.gapCenter + ob.gapHalf);
+        if(!throughGap){ endGame(); return; }
+      }
+      if(!ob.scored && ob.x + ob.width < koi.x){
+        ob.scored = true;
+        score++;
+        scoreEl.textContent = score;
+        if(score===20 && !milestoneShown){
+          milestoneShown = true;
+          showMilestone();
+        }
+      }
+    }
+    while(obstacles.length && obstacles[0].x + obstacles[0].width < -4){
+      obstacles.shift();
+    }
+  }
+
+  function drawBackground(t){
+    var g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0, '#0f2233');
+    g.addColorStop(0.55, '#1d4356');
+    g.addColorStop(1, '#356e83');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,W,H);
+
+    var mx = W*0.78, my = H*0.16;
+    var glow = ctx.createRadialGradient(mx,my,2,mx,my,46);
+    glow.addColorStop(0,'rgba(217,164,65,0.55)');
+    glow.addColorStop(1,'rgba(217,164,65,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(mx,my,46,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#f2dfa8';
+    ctx.beginPath(); ctx.arc(mx,my,15,0,Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = 'rgba(244,239,228,0.35)';
+    for(var j=0;j<bubbles.length;j++){
+      var bb = bubbles[j];
+      ctx.globalAlpha = 0.5;
+      ctx.beginPath(); ctx.arc(bb.x,bb.y,bb.r,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    for(var k=0;k<3;k++){
+      var yy = H*0.62 + k*22;
+      ctx.strokeStyle = 'rgba(244,239,228,'+(0.06+k*0.02)+')';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      for(var x=0;x<=W;x+=14){
+        var yOff = Math.sin(x*0.04 + t*1.3 + k)*3;
+        if(x===0) ctx.moveTo(x, yy+yOff); else ctx.lineTo(x, yy+yOff);
+      }
+      ctx.stroke();
+    }
+  }
+
+  function drawLeaves(){
+    for(var i=0;i<leaves.length;i++){
+      var lf = leaves[i];
+      ctx.save();
+      ctx.translate(lf.x, lf.y + Math.sin(elapsed*1.6+lf.sway)*4);
+      ctx.rotate(Math.sin(elapsed+lf.sway)*0.5);
+      ctx.fillStyle = i%2===0 ? '#d9a441' : '#c9583a';
+      ctx.globalAlpha = 0.85;
+      ctx.beginPath();
+      ctx.ellipse(0,0, lf.r, lf.r*0.62, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawRock(ob){
+    var topH = ob.gapCenter - ob.gapHalf;
+    var botY = ob.gapCenter + ob.gapHalf;
+    var botH = H - botY;
+
+    var g1 = ctx.createLinearGradient(ob.x,0,ob.x+ob.width,0);
+    g1.addColorStop(0,'#3a362c');
+    g1.addColorStop(0.5,'#5c5648');
+    g1.addColorStop(1,'#332f27');
+
+    if(topH > 0){
+      ctx.fillStyle = g1;
+      ctx.fillRect(ob.x, 0, ob.width, topH);
+      ctx.fillStyle = 'rgba(95,122,79,0.55)';
+      ctx.beginPath();
+      ctx.ellipse(ob.x+ob.width*0.5, topH-6, ob.width*0.48, 9, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(ob.x, 0, ob.width, topH);
+    }
+    if(botH > 0){
+      ctx.fillStyle = g1;
+      ctx.fillRect(ob.x, botY, ob.width, botH);
+      ctx.fillStyle = 'rgba(95,122,79,0.5)';
+      ctx.beginPath();
+      ctx.ellipse(ob.x+ob.width*0.5, botY+6, ob.width*0.48, 9, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(ob.x, botY, ob.width, botH);
+    }
+  }
+
+  function drawKoi(t){
+    ctx.save();
+    ctx.translate(koi.x, koi.y);
+    ctx.rotate(koi.rot);
+
+    var wag = Math.sin(t*11) * 0.5;
+    ctx.fillStyle = 'rgba(246,177,132,0.85)';
+    ctx.beginPath();
+    ctx.moveTo(-16,0);
+    ctx.quadraticCurveTo(-30, -10 + wag*10, -34, 0);
+    ctx.quadraticCurveTo(-30, 10 + wag*10, -16, 0);
+    ctx.fill();
+
+    var bodyG = ctx.createLinearGradient(0,-13,0,13);
+    bodyG.addColorStop(0, '#e2652f');
+    bodyG.addColorStop(1, '#fbe3c9');
+    ctx.fillStyle = bodyG;
+    ctx.beginPath();
+    ctx.ellipse(0,0, 22, 12.5, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle = '#241d1a';
+    ctx.beginPath(); ctx.ellipse(-3,-5, 3.4,2.6, 0.3, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(6,3, 2.6,2, -0.2, 0, Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = 'rgba(226,101,47,0.9)';
+    ctx.beginPath();
+    ctx.moveTo(-2,-11);
+    ctx.quadraticCurveTo(4,-19, 10,-11);
+    ctx.quadraticCurveTo(4,-13, -2,-11);
+    ctx.fill();
+
+    ctx.fillStyle = '#1a120f';
+    ctx.beginPath(); ctx.arc(15,-3, 1.9, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#f4efe4';
+    ctx.beginPath(); ctx.arc(15.6,-3.6, 0.7, 0, Math.PI*2); ctx.fill();
+
+    ctx.restore();
+  }
+
+  function render(t){
+    drawBackground(t);
+    drawLeaves();
+    for(var i=0;i<obstacles.length;i++){ drawRock(obstacles[i]); }
+    drawKoi(t);
+  }
+
+  function loop(ts){
+    if(lastTime===null) lastTime = ts;
+    var dt = (ts - lastTime)/1000;
+    dt = Math.min(dt, 0.05);
+    lastTime = ts;
+    elapsed += dt;
+    update(dt, elapsed);
+    render(elapsed);
+    requestAnimationFrame(loop);
+  }
+
+  resize();
+  initParticles();
+  updateShareLink();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
