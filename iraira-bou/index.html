@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-05H87J02NQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-05H87J02NQ');
+</script>
+<title>ワンタップイライラ棒 | VILC</title>
+<meta name="description" content="タップで進む向きを切り替えて、ワイヤーに触れずにゴールを目指すワンタップのイライラ棒。1ミスでビリビリ、最初から。VILC発のくだらない実験企画です。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VILC">
+<meta property="og:title" content="ワンタップイライラ棒">
+<meta property="og:description" content="タップで向きを切り替えて、ワイヤーに触れずにゴールへ。ゴール直前の99%が長い、ワンタップのイライラ棒">
+<meta property="og:url" content="https://www.vilc.tokyo/iraira-bou/">
+<meta property="og:image" content="https://www.vilc.tokyo/iraira-bou/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ワンタップイライラ棒">
+<meta name="twitter:description" content="タップで向きを切り替えて、ワイヤーに触れずにゴールへ。ゴール直前の99%が長い、ワンタップのイライラ棒">
+<meta name="twitter:image" content="https://www.vilc.tokyo/iraira-bou/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&family=Manrope:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0b0d12;
+  --surface:#14171f;
+  --surface-alt:#1b1f29;
+  --line:#262b36;
+  --text:#eef0f4;
+  --muted:#8b8fa3;
+  --accent:#5b8cff;
+  --accent-dim:#2c3f75;
+  --danger:#ff5c8a;
+  --warn:#ffcf5c;
+  --success:#35d399;
+}
+*{box-sizing:border-box;}
+[hidden]{display:none!important;}
+html,body{margin:0;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Manrope',system-ui,sans-serif;
+  padding-block:1rem 2rem;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+h1,h2,h3{font-family:'Sora',system-ui,sans-serif;margin:0;text-wrap:balance;}
+p{margin:0;line-height:1.6;font-size:13px;color:var(--muted);}
+button{font-family:'Manrope',system-ui,sans-serif;cursor:pointer;border:none;}
+.wrap{width:100%;max-width:420px;margin:0 auto;display:flex;flex-direction:column;gap:10px;}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;}
+.badge{
+  flex:none;width:34px;height:34px;border-radius:8px;background:var(--accent);
+  color:#08101f;font-family:'Sora',sans-serif;font-weight:700;font-size:11px;
+  display:flex;align-items:center;justify-content:center;
+}
+h1{font-size:18px;line-height:1.2;}
+.chips{display:flex;gap:6px;flex:none;}
+.chip{
+  height:30px;padding:0 10px;border-radius:15px;background:var(--surface-alt);
+  border:1px solid var(--line);color:var(--muted);font-size:11.5px;font-weight:700;
+}
+.chip:hover{border-color:var(--accent);color:var(--text);}
+.chip:focus-visible,.btn:focus-visible,.giveup-tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.tag{
+  height:30px;padding:0 10px;border-radius:15px;display:flex;align-items:center;
+  font-size:11.5px;font-weight:700;background:var(--accent-dim);color:#cfe0ff;
+}
+.tag.oni{background:#4a2233;color:#ffc4d6;}
+.hud{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;font-size:12px;color:var(--muted);}
+.hud b{font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:700;font-variant-numeric:tabular-nums;}
+.bar{height:6px;border-radius:3px;background:var(--surface-alt);overflow:hidden;}
+#barFill{height:100%;width:0;background:var(--warn);}
+.stage{
+  position:relative;margin:0 auto;border:1px solid var(--line);border-radius:14px;
+  overflow:hidden;background:var(--surface);
+  touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+}
+canvas{display:block;}
+.overlay{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:14px;background:rgba(8,10,14,.62);overflow:auto;
+}
+.card{
+  width:100%;max-width:300px;background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;padding:18px 16px;display:flex;flex-direction:column;gap:12px;text-align:center;
+}
+.zap{font-family:'Sora',sans-serif;font-weight:700;font-size:30px;color:var(--warn);letter-spacing:.02em;}
+.quip{font-size:13px;color:var(--text);}
+.stats{display:flex;justify-content:center;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap;}
+.stats b{font-family:'JetBrains Mono',monospace;color:var(--text);font-variant-numeric:tabular-nums;}
+.go{font-family:'Sora',sans-serif;font-weight:700;font-size:14px;color:var(--accent);}
+.retry{font-size:12.5px;color:var(--muted);}
+.rules{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;text-align:left;font-size:12.5px;color:var(--muted);}
+.rules li{display:flex;gap:8px;align-items:flex-start;}
+.rules i{flex:none;font-style:normal;font-family:'JetBrains Mono',monospace;color:var(--warn);font-size:11px;padding-top:1px;}
+.btn{height:42px;border-radius:8px;font-size:13.5px;font-weight:700;padding:0 16px;}
+.btn-outline{background:transparent;border:1px solid var(--line);color:var(--text);}
+.btn-outline:hover{border-color:var(--accent);}
+.btn-danger{background:transparent;border:1px solid var(--danger);color:var(--danger);}
+.btn-danger:hover{background:#4a2233;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.stat{background:var(--surface-alt);border-radius:10px;padding:10px 6px;text-align:center;}
+.stat b{display:block;font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--warn);font-variant-numeric:tabular-nums;}
+.stat span{font-size:10.5px;color:var(--muted);}
+.share-block{display:flex;flex-direction:column;gap:8px;}
+.share-btn{
+  height:42px;border-radius:8px;font-size:13.5px;font-weight:700;
+  background:#fff;color:#0b0d12;display:flex;align-items:center;justify-content:center;text-decoration:none;
+}
+.share-btn:hover{background:#e6e6e6;}
+.vilc-banner{
+  display:flex;align-items:center;gap:12px;text-align:left;
+  background:var(--surface-alt);border:1px solid var(--line);border-radius:12px;
+  padding:10px 12px;text-decoration:none;color:var(--text);
+}
+.vilc-banner:hover{border-color:var(--accent);}
+.vilc-badge{
+  flex:none;width:36px;height:36px;border-radius:8px;background:var(--accent);
+  color:#08101f;font-family:'Sora',sans-serif;font-weight:700;font-size:12px;
+  display:flex;align-items:center;justify-content:center;
+}
+.vilc-copy{display:flex;flex-direction:column;gap:2px;}
+.vilc-copy b{font-size:12.5px;font-weight:700;}
+.vilc-copy span{font-size:11px;color:var(--muted);}
+.giveup-tab{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);width:26px;height:84px;
+  background:var(--surface-alt);border:1px solid var(--line);border-left:none;border-radius:0 8px 8px 0;
+  color:var(--muted);font-size:10.5px;letter-spacing:.05em;
+  display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;
+  opacity:.6;z-index:5;padding:0;
+}
+.giveup-tab:hover{opacity:1;color:var(--danger);border-color:var(--danger);}
+.foot{text-align:center;font-size:11.5px;}
+@media (prefers-reduced-motion:no-preference){
+  .card{animation:pop .16s ease-out;}
+  @keyframes pop{from{transform:scale(.94);opacity:0;}to{transform:scale(1);opacity:1;}}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="badge">VILC</div>
+      <h1>ワンタップイライラ棒</h1>
+    </div>
+    <div class="chips">
+      <span class="tag" id="modeTag">ふつう</span>
+      <button class="chip" id="soundBtn" type="button">音 ON</button>
+    </div>
+  </header>
+  <div class="hud">
+    <div>ビリビリ <b id="hitCount">0</b></div>
+    <div class="bar"><div id="barFill"></div></div>
+    <div><b id="pct">0</b>%</div>
+  </div>
+  <div class="stage" id="stage">
+    <canvas id="cv" aria-label="ワイヤーの隙間を進むゲーム画面"></canvas>
+    <div class="overlay" id="ovTitle">
+      <div class="card">
+        <h2>ワイヤーに触れずにゴールへ</h2>
+        <ul class="rules">
+          <li><i>01</i><span>タップするたびに、進む向きが左右で入れ替わる</span></li>
+          <li><i>02</i><span>ワイヤーに触れたらビリビリ。最初からやり直し</span></li>
+          <li><i>03</i><span>ゴールは見えた所とは限らない</span></li>
+        </ul>
+        <div class="go">タップでスタート</div>
+        <div class="retry">ベスト <b id="titleBest" style="color:var(--text)">0</b>%</div>
+      </div>
+    </div>
+    <div class="overlay" id="ovDead" hidden>
+      <div class="card">
+        <div class="zap">ビリビリ!!</div>
+        <div class="quip" id="quip"></div>
+        <div class="stats">
+          <span>到達 <b id="dPct">0</b>%</span>
+          <span>ベスト <b id="dBest">0</b>%</span>
+          <span><b id="dTry">1</b>回目</span>
+        </div>
+        <div class="go">タップでリトライ</div>
+      </div>
+    </div>
+    <div class="overlay" id="ovClear" hidden></div>
+    <div class="overlay" id="ovGive" hidden></div>
+    <button class="giveup-tab" id="giveupTab" type="button" hidden>諦める</button>
+  </div>
+  <p class="foot">タップ / スペースキーで進行方向を切り替え</p>
+</div>
+<script>
+var IRAIRABO = (function(){
+  var W = 360, H = 560, RING_Y = 430, R = 7, WIRE = 3, K = 0.8, HP = 340;
+  var KF = [
+    {s:0,    A:0,  P:520, h:80,  hm:0,  shape:0},
+    {s:220,  A:0,  P:520, h:74,  hm:0,  shape:0},
+    {s:520,  A:32, P:560, h:66,  hm:0,  shape:0},
+    {s:950,  A:40, P:560, h:58,  hm:0,  shape:0},
+    {s:1400, A:34, P:340, h:52,  hm:0,  shape:1},
+    {s:1950, A:34, P:340, h:48,  hm:0,  shape:1},
+    {s:2200, A:16, P:700, h:42,  hm:0,  shape:0},
+    {s:2650, A:20, P:700, h:42,  hm:0,  shape:0},
+    {s:2750, A:28, P:520, h:50,  hm:9,  shape:0},
+    {s:3250, A:28, P:520, h:50,  hm:9,  shape:0},
+    {s:3320, A:0,  P:480, h:150, hm:0,  shape:0},
+    {s:3480, A:0,  P:480, h:150, hm:0,  shape:0},
+    {s:3780, A:24, P:460, h:46,  hm:0,  shape:0.5},
+    {s:4100, A:30, P:440, h:42,  hm:0,  shape:0.5},
+    {s:4700, A:30, P:440, h:42,  hm:0,  shape:0.5}
+  ];
+  var MODES = {
+    normal: {label:'ふつう', v0:124, accel:0.30, hScale:1,    total:4100, fakeS:3400},
+    oni:    {label:'鬼',     v0:150, accel:0.32, hScale:0.88, total:4100, fakeS:3400}
+  };
+  var cache = {};
+
+  function lerpAt(arr, s){
+    if(s <= 0) return arr[0];
+    var i = Math.floor(s);
+    if(i >= arr.length - 1) return arr[arr.length - 1];
+    var f = s - i;
+    return arr[i]*(1-f) + arr[i+1]*f;
+  }
+
+  function buildCourse(key){
+    if(cache[key]) return cache[key];
+    var m = MODES[key];
+    var END = m.total + H + 120;
+    var cArr = new Float32Array(END + 1), hArr = new Float32Array(END + 1);
+    var phase = 0, ki = 0;
+    for(var s = 0; s <= END; s++){
+      while(ki < KF.length - 2 && s > KF[ki+1].s) ki++;
+      var a = KF[ki], b = KF[ki+1];
+      var u = Math.min(1, Math.max(0, (s - a.s) / (b.s - a.s)));
+      var A = a.A + (b.A - a.A)*u, P = a.P + (b.P - a.P)*u;
+      var h = a.h + (b.h - a.h)*u, hm = a.hm + (b.hm - a.hm)*u, sh = a.shape + (b.shape - a.shape)*u;
+      phase += 2*Math.PI / P;
+      var wave = (1 - sh)*Math.sin(phase) + sh*(2/Math.PI)*Math.asin(Math.sin(phase));
+      cArr[s] = 180 + A*wave;
+      hArr[s] = (h + hm*Math.sin(2*Math.PI*s/HP)) * m.hScale;
+    }
+    var course = {
+      key: key, label: m.label, total: m.total, fakeS: m.fakeS,
+      cAt: function(s){ return lerpAt(cArr, s); },
+      hAt: function(s){ return lerpAt(hArr, s); },
+      vAt: function(s){ return m.v0 * (1 + m.accel * Math.min(1, Math.max(0, s) / m.total)); }
+    };
+    cache[key] = course;
+    return course;
+  }
+
+  function createSim(key){
+    var course = buildCourse(key);
+    return {course:course, s:0, x:course.cAt(0), dir:1, t:0, taps:0, over:null, hitSide:0};
+  }
+
+  var OFFS = [-5, 0, 5];
+  function step(sim, dt){
+    if(sim.over) return;
+    var c = sim.course;
+    var v = c.vAt(sim.s);
+    var ramp = Math.min(1, 0.4 + 1.2*sim.t);
+    sim.s += v*dt;
+    sim.x += sim.dir * K * v * ramp * dt;
+    sim.t += dt;
+    for(var i = 0; i < OFFS.length; i++){
+      var ss = sim.s + OFFS[i];
+      var cc = c.cAt(ss), hh = c.hAt(ss) - WIRE/2;
+      if(Math.abs(sim.x - cc) + R > hh){
+        sim.over = 'hit';
+        sim.hitSide = sim.x > cc ? 1 : -1;
+        return;
+      }
+    }
+    if(sim.s >= c.total) sim.over = 'clear';
+  }
+
+  function tap(sim){ sim.dir = -sim.dir; sim.taps++; }
+
+  return {W:W, H:H, RING_Y:RING_Y, R:R, WIRE:WIRE, K:K, MODES:MODES,
+          buildCourse:buildCourse, createSim:createSim, step:step, tap:tap, current:null};
+})();
+</script>
+<script>
+(function(){
+  var C = IRAIRABO, W = C.W, H = C.H, RING_Y = C.RING_Y, R = C.R, WIRE = C.WIRE;
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var stage = document.getElementById('stage');
+  var ovTitle = document.getElementById('ovTitle'), ovDead = document.getElementById('ovDead');
+  var ovClear = document.getElementById('ovClear'), ovGive = document.getElementById('ovGive');
+  var giveTab = document.getElementById('giveupTab');
+  var soundBtn = document.getElementById('soundBtn'), modeTag = document.getElementById('modeTag');
+  var hitCountEl = document.getElementById('hitCount'), pctEl = document.getElementById('pct');
+  var barFill = document.getElementById('barFill');
+
+  var VILC_URL = 'https://www.vilc.tokyo';
+  var SHARE_URL = 'https://www.vilc.tokyo/iraira-bou/share/';
+  var STEP = 1/120;
+  var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  var mode = 'normal', state = 'ready', sim = null;
+  var tries = 0, shocks = 0, playMs = 0, best = 0, deadAt = 0, soundOn = true;
+  var particles = [], heckles = [], nextHeckle = 3, flash = 0, shake = 0, tilt = 0, fakeMsg = 0, fakeSeen = false;
+  var audio = null, acc = 0, lastTs = 0, firstShown = true;
+
+  var HECKLES = ['余裕じゃん', '手、震えてない?', 'あ、そこ危ない', 'ほら右右右', '息止めてる?',
+                 '今日は調子いいね', '見てるよ', 'ゴールまだだよ', 'ビリビリ待ち', 'いまの音、聞こえた?'];
+
+  function bestKey(){ return 'vilc_iraira_best_' + mode; }
+  function loadBest(){
+    try { best = parseInt(localStorage.getItem(bestKey()), 10) || 0; } catch(e){ best = 0; }
+  }
+  function saveBest(){
+    try { localStorage.setItem(bestKey(), String(best)); } catch(e){}
+  }
+  try { soundOn = localStorage.getItem('vilc_iraira_sound') !== 'off'; } catch(e){}
+  soundBtn.textContent = soundOn ? '音 ON' : '音 OFF';
+
+  function fit(){
+    var wrapW = stage.parentNode.clientWidth;
+    var availH = (window.innerHeight || 800) - 150;
+    var scale = Math.min(wrapW / W, availH / H);
+    scale = Math.max(0.72, Math.min(1.25, scale));
+    var dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    var cssW = Math.round(W*scale), cssH = Math.round(H*scale);
+    cv.style.width = cssW + 'px'; cv.style.height = cssH + 'px';
+    stage.style.width = cssW + 'px';
+    cv.width = Math.round(cssW*dpr); cv.height = Math.round(cssH*dpr);
+    ctx.setTransform(cssW*dpr/W, 0, 0, cssH*dpr/H, 0, 0);
+  }
+
+  function unlockAudio(){
+    try {
+      if(!audio){
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if(AC) audio = new AC();
+      }
+      if(audio && audio.state === 'suspended') audio.resume();
+    } catch(e){}
+  }
+  function tone(type, f0, f1, dur, vol){
+    if(!soundOn || !audio) return;
+    try {
+      var t = audio.currentTime, o = audio.createOscillator(), g = audio.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(f0, t);
+      if(f1 !== f0) o.frequency.linearRampToValueAtTime(f1, t + dur);
+      g.gain.setValueAtTime(vol, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      o.connect(g); g.connect(audio.destination);
+      o.start(t); o.stop(t + dur + 0.02);
+    } catch(e){}
+  }
+  function blip(){ tone('triangle', 560, 480, 0.05, 0.05); }
+  function buzz(){
+    tone('sawtooth', 150, 85, 0.38, 0.17);
+    tone('square', 233, 120, 0.3, 0.07);
+    if(!soundOn || !audio) return;
+    try {
+      var len = Math.floor(audio.sampleRate*0.3), buf = audio.createBuffer(1, len, audio.sampleRate);
+      var d = buf.getChannelData(0);
+      for(var i = 0; i < len; i++) d[i] = (Math.random()*2 - 1) * (1 - i/len);
+      var src = audio.createBufferSource(), g = audio.createGain();
+      g.gain.value = 0.12; src.buffer = buf; src.connect(g); g.connect(audio.destination); src.start();
+    } catch(e){}
+  }
+  function fanfare(){
+    var notes = [523, 659, 784, 1047];
+    notes.forEach(function(f, i){ setTimeout(function(){ tone('triangle', f, f, 0.22, 0.09); }, i*110); });
+  }
+
+  function newSim(){
+    sim = C.createSim(mode);
+    C.current = sim;
+    particles = []; heckles = []; nextHeckle = 3; flash = 0; shake = 0; tilt = 0; fakeMsg = 0; fakeSeen = false;
+  }
+
+  function hideOverlays(){ ovTitle.hidden = true; ovDead.hidden = true; ovClear.hidden = true; ovGive.hidden = true; giveTab.hidden = true; }
+
+  function updateModeUi(){
+    modeTag.textContent = C.MODES[mode].label;
+    modeTag.className = 'tag' + (mode === 'oni' ? ' oni' : '');
+    document.getElementById('titleBest').textContent = best;
+  }
+
+  function startRun(){
+    unlockAudio();
+    hideOverlays();
+    tries++;
+    state = 'run';
+    acc = 0;
+  }
+
+  function retry(){
+    newSim();
+    startRun();
+  }
+
+  function pctNow(){
+    if(sim.over === 'clear') return 100;
+    var f = sim.course.fakeS;
+    return sim.s < f ? Math.floor(99 * sim.s / f) : 99;
+  }
+
+  var QUIPS = [
+    [15, ['まだ序盤ですが…', 'ウォーミングアップですね', 'ここから本番です']],
+    [40, ['いい線いってました', '指のせいです', '今のは壁が悪い']],
+    [70, ['中盤の壁は厚い', '惜しい…惜しいのか?', '半分近く来てたのに']],
+    [95, ['あと少しだったのに!', 'ゴールが見えてたのに', 'ここで?今?']],
+    [101, ['ゴール目前で…', 'それはもう事故', 'ゴールに届く距離だった']]
+  ];
+  function quipFor(p){
+    for(var i = 0; i < QUIPS.length; i++){
+      if(p < QUIPS[i][0]){ var a = QUIPS[i][1]; return a[Math.floor(Math.random()*a.length)]; }
+    }
+    return '';
+  }
+
+  function onHit(){
+    shocks++;
+    var p = pctNow();
+    if(p > best){ best = p; saveBest(); }
+    state = 'dead';
+    deadAt = Date.now();
+    flash = 1; shake = 1;
+    for(var i = 0; i < 16; i++){
+      var a = Math.random()*Math.PI*2, sp = 60 + Math.random()*160;
+      particles.push({x:sim.x + sim.hitSide*R, y:RING_Y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp, life:0.5 + Math.random()*0.3});
+    }
+    buzz();
+    try { if(navigator.vibrate) navigator.vibrate(90); } catch(e){}
+    document.getElementById('quip').textContent = quipFor(p);
+    document.getElementById('dPct').textContent = p;
+    document.getElementById('dBest').textContent = best;
+    document.getElementById('dTry').textContent = tries;
+    ovDead.hidden = false;
+    giveTab.hidden = tries < 3;
+  }
+
+  function fmtSec(ms){ return (ms/1000).toFixed(1); }
+
+  function shareBlockHtml(tweetText){
+    var url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(tweetText) +
+              '&url=' + encodeURIComponent(SHARE_URL) + '&hashtags=VILC';
+    return '<div class="share-block">' +
+      '<a class="share-btn" href="' + url + '" target="_blank" rel="noopener">Xでシェアする</a>' +
+      '<a class="vilc-banner" href="' + VILC_URL + '" target="_blank" rel="noopener">' +
+        '<div class="vilc-badge">VILC</div>' +
+        '<div class="vilc-copy"><b>VILC</b><span>こういうくだらないものを作っています</span></div>' +
+      '</a></div>';
+  }
+
+  function onClear(){
+    state = 'clear';
+    flash = 0;
+    fanfare();
+    var secs = fmtSec(playMs);
+    var shockCount = tries - 1;
+    var modeLabel = mode === 'oni' ? '鬼モードを' : '';
+    var tweet = '『ワンタップイライラ棒』' + modeLabel + tries + '回目でゴール。ビリビリ' + shockCount + '回、合計' + secs + '秒。';
+    var other = mode === 'oni' ? 'normal' : 'oni';
+    ovClear.innerHTML =
+      '<div class="card">' +
+        '<div class="zap" style="color:var(--success)">ゴール!</div>' +
+        '<div class="stat-grid">' +
+          '<div class="stat"><b>' + tries + '</b><span>挑戦回数</span></div>' +
+          '<div class="stat"><b>' + shockCount + '</b><span>ビリビリ</span></div>' +
+          '<div class="stat" style="grid-column:span 2"><b>' + secs + '秒</b><span>合計プレイ時間</span></div>' +
+        '</div>' +
+        '<button class="btn btn-outline" type="button" data-act="again">もう一回</button>' +
+        '<button class="btn btn-danger" type="button" data-act="switch">' + (other === 'oni' ? '鬼モードに挑戦' : 'ふつうモードに戻る') + '</button>' +
+        shareBlockHtml(tweet) +
+      '</div>';
+    setTimeout(function(){ if(state === 'clear'){ hideOverlays(); ovClear.hidden = false; } }, 450);
+  }
+
+  function onGiveUp(){
+    state = 'give';
+    hideOverlays();
+    var tweet = '『ワンタップイライラ棒』でゴール手前' + best + '%まで行って心が折れた。ビリビリ' + shocks + '回。';
+    ovGive.innerHTML =
+      '<div class="card">' +
+        '<div class="zap" style="font-size:24px">心が折れました</div>' +
+        '<p>ワイヤーに触れ続けた結果です。それも立派な選択です。</p>' +
+        '<div class="stat-grid">' +
+          '<div class="stat"><b>' + best + '%</b><span>ベスト到達</span></div>' +
+          '<div class="stat"><b>' + shocks + '</b><span>ビリビリ</span></div>' +
+          '<div class="stat" style="grid-column:span 2"><b>' + fmtSec(playMs) + '秒</b><span>耐えた時間</span></div>' +
+        '</div>' +
+        '<button class="btn btn-outline" type="button" data-act="again">もう一度挑む</button>' +
+        shareBlockHtml(tweet) +
+      '</div>';
+    ovGive.hidden = false;
+  }
+
+  function resetSession(){
+    tries = 0; shocks = 0; playMs = 0;
+    hitCountEl.textContent = '0';
+    newSim();
+    hideOverlays();
+    state = 'ready';
+    updateModeUi();
+  }
+
+  function onTap(){
+    var ae = document.activeElement;
+    if(ae && (ae.tagName === 'A' || ae.tagName === 'BUTTON') && state !== 'run') return;
+    unlockAudio();
+    if(state === 'ready'){ startRun(); }
+    else if(state === 'run'){ C.tap(sim); blip(); }
+    else if(state === 'dead'){ if(Date.now() - deadAt > 450) retry(); }
+  }
+
+  stage.addEventListener('pointerdown', function(e){
+    if(e.target.closest && e.target.closest('a,button')) return;
+    e.preventDefault();
+    onTap();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.repeat) return;
+    var keys = [' ', 'Enter', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+    if(keys.indexOf(e.key) < 0) return;
+    var ae = document.activeElement;
+    if(ae && (ae.tagName === 'A' || ae.tagName === 'BUTTON') && state !== 'run') return;
+    e.preventDefault();
+    onTap();
+  });
+  document.addEventListener('touchend', unlockAudio, {passive:true});
+  document.addEventListener('click', unlockAudio);
+
+  stage.addEventListener('click', function(e){
+    var t = e.target.closest ? e.target.closest('[data-act]') : null;
+    if(!t) return;
+    var act = t.getAttribute('data-act');
+    if(act === 'again'){ resetSession(); }
+    else if(act === 'switch'){ mode = mode === 'oni' ? 'normal' : 'oni'; loadBest(); resetSession(); }
+  });
+  giveTab.addEventListener('click', function(){ onGiveUp(); });
+  soundBtn.addEventListener('click', function(){
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? '音 ON' : '音 OFF';
+    try { localStorage.setItem('vilc_iraira_sound', soundOn ? 'on' : 'off'); } catch(e){}
+    if(soundOn){ unlockAudio(); blip(); }
+  });
+  window.addEventListener('resize', fit);
+
+  function updateFx(dt){
+    flash = Math.max(0, flash - dt*3.2);
+    shake = Math.max(0, shake - dt*4);
+    fakeMsg = Math.max(0, fakeMsg - dt);
+    tilt += (sim.dir*10 - tilt) * Math.min(1, dt*12);
+    for(var i = particles.length - 1; i >= 0; i--){
+      var p = particles[i];
+      p.life -= dt; p.x += p.vx*dt; p.y += p.vy*dt; p.vy += 260*dt;
+      if(p.life <= 0) particles.splice(i, 1);
+    }
+    if(state === 'run'){
+      nextHeckle -= dt;
+      if(nextHeckle <= 0){
+        nextHeckle = (mode === 'oni' ? 2 : 3) + Math.random()*2.5;
+        heckles.push({text:HECKLES[Math.floor(Math.random()*HECKLES.length)], s:sim.s + RING_Y + 30, x:50 + Math.random()*260});
+      }
+      if(!fakeSeen && sim.s >= sim.course.fakeS){ fakeSeen = true; fakeMsg = 1.8; }
+    }
+    for(var j = heckles.length - 1; j >= 0; j--){
+      if(RING_Y - (heckles[j].s - sim.s) > H + 40) heckles.splice(j, 1);
+    }
+  }
+
+  function drawStrip(sy, label){
+    var y = RING_Y - (sy - sim.s);
+    if(y < -30 || y > H + 30) return;
+    var c = sim.course.cAt(sy), h = sim.course.hAt(sy) - WIRE/2;
+    var x0 = c - h, size = 7, cols = Math.floor((2*h)/size);
+    for(var r = 0; r < 2; r++){
+      for(var k = 0; k < cols; k++){
+        ctx.fillStyle = (k + r) % 2 === 0 ? '#eef0f4' : '#0b0d12';
+        ctx.fillRect(x0 + k*size, y - 14 + r*size, size, size);
+      }
+    }
+    ctx.fillStyle = '#eef0f4';
+    ctx.font = '700 15px Sora, "Hiragino Sans", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, c, y - 22);
+  }
+
+  function draw(){
+    var s = sim.s, course = sim.course;
+    ctx.save();
+    if(shake > 0 && !reduce) ctx.translate((Math.random() - .5)*10*shake, (Math.random() - .5)*10*shake);
+    ctx.fillStyle = '#0b0d12';
+    ctx.fillRect(-20, -20, W + 40, H + 40);
+
+    ctx.strokeStyle = '#151923'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for(var gy = ((RING_Y + s) % 40) - 40; gy < H + 40; gy += 40){ ctx.moveTo(0, gy); ctx.lineTo(W, gy); }
+    for(var gx = 0; gx <= W; gx += 40){ ctx.moveTo(gx, -10); ctx.lineTo(gx, H + 10); }
+    ctx.stroke();
+
+    var limit = s < course.fakeS ? course.fakeS : course.total;
+    var Lp = [], Rp = [];
+    function pushPt(y){
+      var sy = s + RING_Y - y, c = course.cAt(sy), h = course.hAt(sy);
+      Lp.push([c - h, y]); Rp.push([c + h, y]);
+    }
+    for(var y = H + 10; y >= -10; y -= 6){
+      var sy = s + RING_Y - y;
+      if(sy > limit){ pushPt(s + RING_Y - limit); break; }
+      pushPt(y);
+    }
+    ctx.beginPath();
+    Lp.forEach(function(p, i){ if(i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]); });
+    for(var q = Rp.length - 1; q >= 0; q--) ctx.lineTo(Rp[q][0], Rp[q][1]);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(91,140,255,0.06)';
+    ctx.fill();
+
+    var white = flash > 0.55;
+    ctx.lineWidth = WIRE; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.strokeStyle = white ? '#ffffff' : '#ffcf5c';
+    ctx.shadowColor = white ? 'rgba(255,255,255,.7)' : 'rgba(255,207,92,.5)';
+    ctx.shadowBlur = 8;
+    [Lp, Rp].forEach(function(arr){
+      ctx.beginPath();
+      arr.forEach(function(p, i){ if(i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]); });
+      ctx.stroke();
+    });
+    ctx.shadowBlur = 0;
+
+    var y0 = RING_Y + s;
+    if(y0 < H + 24){
+      var c0 = course.cAt(0), h0 = course.hAt(0) - WIRE/2;
+      ctx.strokeStyle = '#35d399'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(c0 - h0, y0); ctx.lineTo(c0 + h0, y0); ctx.stroke();
+      ctx.fillStyle = '#35d399'; ctx.font = '700 12px Sora, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('START', c0, y0 + 18);
+    }
+    drawStrip(course.fakeS, 'GOAL');
+    if(s >= course.fakeS - 600) drawStrip(course.total, 'GOAL');
+
+    heckles.forEach(function(hk){
+      var hy = RING_Y - (hk.s - s);
+      ctx.font = '500 12.5px Manrope, "Hiragino Sans", sans-serif';
+      var tw = ctx.measureText(hk.text).width + 16;
+      ctx.fillStyle = 'rgba(27,31,41,.72)';
+      ctx.fillRect(hk.x - tw/2, hy - 12, tw, 22);
+      ctx.fillStyle = 'rgba(238,240,244,.62)';
+      ctx.textAlign = 'center';
+      ctx.fillText(hk.text, hk.x, hy + 4);
+    });
+
+    ctx.strokeStyle = '#8b8fa3'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(sim.x, RING_Y + R); ctx.lineTo(sim.x - tilt*3, H + 14); ctx.stroke();
+    var pulse = state === 'ready' ? 1 + Math.sin(Date.now()/260)*0.12 : 1;
+    ctx.beginPath(); ctx.arc(sim.x, RING_Y, R*pulse, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(91,140,255,.18)'; ctx.fill();
+    ctx.strokeStyle = '#5b8cff'; ctx.lineWidth = 3; ctx.stroke();
+
+    particles.forEach(function(p){
+      ctx.fillStyle = 'rgba(255,230,140,' + Math.max(0, p.life*1.6) + ')';
+      ctx.fillRect(p.x - 1.5, p.y - 1.5, 3, 3);
+    });
+
+    if(state === 'ready' && ovTitle.hidden){
+      ctx.fillStyle = '#5b8cff'; ctx.font = '700 15px Sora, "Hiragino Sans", sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('タップでスタート', W/2, RING_Y - 56);
+    }
+    if(fakeMsg > 0){
+      ctx.globalAlpha = Math.min(1, fakeMsg*1.5);
+      ctx.fillStyle = '#ff5c8a'; ctx.font = '700 16px Sora, "Hiragino Sans", sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('ここはゴールではありません', W/2, 110);
+      ctx.fillStyle = '#eef0f4'; ctx.font = '500 12px Manrope, "Hiragino Sans", sans-serif';
+      ctx.fillText('もう少し続きます', W/2, 132);
+      ctx.globalAlpha = 1;
+    }
+    if(flash > 0){
+      ctx.fillStyle = 'rgba(255,92,138,' + (flash*(reduce ? 0.15 : 0.35)) + ')';
+      ctx.fillRect(-20, -20, W + 40, H + 40);
+    }
+    ctx.restore();
+  }
+
+  function updateHud(){
+    var p = pctNow();
+    pctEl.textContent = p;
+    barFill.style.width = p + '%';
+    hitCountEl.textContent = shocks;
+  }
+
+  function frame(ts){
+    requestAnimationFrame(frame);
+    var dt = Math.min(0.1, (ts - lastTs)/1000 || 0);
+    lastTs = ts;
+    if(state === 'run'){
+      acc += dt;
+      playMs += dt*1000;
+      while(acc >= STEP && state === 'run'){
+        C.step(sim, STEP);
+        acc -= STEP;
+        if(sim.over === 'hit'){ onHit(); }
+        else if(sim.over === 'clear'){ onClear(); }
+      }
+    }
+    updateFx(dt);
+    draw();
+    updateHud();
+  }
+
+  loadBest();
+  newSim();
+  updateModeUi();
+  fit();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
